@@ -14,9 +14,6 @@ function App() {
     socket.on("disconnect", () => {
       setIsConnected(false);
     });
-    socket.on("testReturn", () => {
-      console.log("Works");
-    });
   });
 
   const sendMessage = () => {
