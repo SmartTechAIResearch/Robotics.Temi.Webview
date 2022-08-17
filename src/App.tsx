@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./App.css";
 import { io } from "socket.io-client";
 
-const socket = io("https://mcttemisocket.azurewebsites.net:8453");
+const socket = io("https://mcttemisocket.azurewebsites.net");
 
 function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
