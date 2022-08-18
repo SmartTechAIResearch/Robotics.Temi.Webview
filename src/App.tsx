@@ -41,17 +41,6 @@ function App() {
         setLocationData(data);
       });
 
-    const textAtLocation = (location: any) => {
-      console.log(location);
-      console.log(locationData);
-      locationData.forEach((data) => {
-        if (location === data.name) {
-          console.log(data);
-          var TextToSay = data.textList;
-          socket.emit("tts", TextToSay[0]);
-        }
-      });
-    };
     socket.on("connect", () => {
       setIsConnected(true);
     });
@@ -62,6 +51,10 @@ function App() {
       console.log(data);
     });
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     socket.on("temiMovementMessage", (data) => {
       console.log(data);
       console.log(data.movementMessage);
@@ -71,7 +64,19 @@ function App() {
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [locationData]);
+
+  const textAtLocation = (location: any) => {
+    console.log(location);
+    console.log(locationData);
+    locationData.forEach((data) => {
+      if (location === data.name) {
+        console.log(data);
+        var TextToSay = data.textList;
+        socket.emit("tts", TextToSay[0]);
+      }
+    });
+  };
 
   const sendMessage = () => {
     socket.emit("message", "home base");
