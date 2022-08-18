@@ -12,8 +12,8 @@ import {
   ListItemButton,
   ListItemText,
 } from "@mui/material";
-//const socket = io("https://mcttemisocket.azurewebsites.net");
-const socket = io("http://172.30.248.58:8453");
+const socket = io("https://mcttemisocket.azurewebsites.net");
+//const socket = io("http://172.30.248.58:8453");
 
 function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
