@@ -13,25 +13,6 @@ function App() {
   const [open, setOpen] = useState(false);
   const [locationData, setLocationData] = useState<Array<iLocationData>>([]);
 
-
-
-
-
-  
-
-  function textAtLocation(location: any){
-    console.log(location);
-    console.log(locationData)
-    locationData.forEach(data => {
-      if(location === data.name){
-        console.log(data)
-        var TextToSay = data.textList;
-        socket.emit("tts", TextToSay[0]);
-      }
-      
-    });
-  }
-
   useEffect(() => {
     let url =
       "https://temitourapi.azurewebsites.net/api/locations/getlocations";
@@ -52,26 +33,37 @@ function App() {
         console.log(data);
         setLocationData(data);
       });
-      socket.on("connect", () => {
-        setIsConnected(true);
-      });
-      socket.on("disconnect", () => {
-        setIsConnected(false);
-      });
-      socket.on("temittsMessage", data =>{
-        console.log(data)
-      });
 
-      socket.on("temiMovementMessage", data =>{
-        console.log(data)
-        console.log(data.movementMessage);
-        if (data.movementMessage["status"] === "complete"){
-          console.log('yee')
-          textAtLocation(data.movementMessage["location"])
+    const textAtLocation = (location: any) => {
+      console.log(location);
+      console.log(locationData);
+      locationData.forEach((data) => {
+        if (location === data.name) {
+          console.log(data);
+          var TextToSay = data.textList;
+          socket.emit("tts", TextToSay[0]);
         }
       });
+    };
+    socket.on("connect", () => {
+      setIsConnected(true);
+    });
+    socket.on("disconnect", () => {
+      setIsConnected(false);
+    });
+    socket.on("temittsMessage", (data) => {
+      console.log(data);
+    });
 
-
+    socket.on("temiMovementMessage", (data) => {
+      console.log(data);
+      console.log(data.movementMessage);
+      if (data.movementMessage["status"] === "complete") {
+        console.log("yee");
+        textAtLocation(data.movementMessage["location"]);
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const sendMessage = () => {
