@@ -73,7 +73,9 @@ function App() {
       if (location === data.name) {
         console.log(data);
         var TextToSay = data.textList;
-        socket.emit("tts", TextToSay[0]);
+        TextToSay.forEach(text => {
+          socket.emit("tts", text);
+        });
       }
     });
   };
