@@ -5,30 +5,32 @@ import { io } from "socket.io-client";
 import { Menu, Wifi, WifiOff } from "@mui/icons-material";
 import { red } from "@mui/material/colors";
 import { Button, Drawer, ListItemButton, ListItemText } from "@mui/material";
-const socket = io("https://mcttemisocket.azurewebsites.net");
-//const socket = io("http://172.30.251.250:8453");
+//const socket = io("https://mcttemisocket.azurewebsites.net");
+const socket = io("http://172.30.248.58:8453");
 
 function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [open, setOpen] = useState(false);
   const [locationData, setLocationData] = useState<Array<iLocationData>>([]);
 
-  useEffect(() => {
-    socket.on("connect", () => {
-      setIsConnected(true);
-    });
-    socket.on("disconnect", () => {
-      setIsConnected(false);
-    });
-    socket.on("temittsMessage", data =>{
-      console.log(data)
-    });
-    socket.on("temiMovementMessage", data =>{
-      console.log(data)
-    });
-  });
+
+
+
 
   
+
+  function textAtLocation(location: any){
+    console.log(location);
+    console.log(locationData)
+    locationData.forEach(data => {
+      if(location === data.name){
+        console.log(data)
+        var TextToSay = data.textList;
+        socket.emit("tts", TextToSay[0]);
+      }
+      
+    });
+  }
 
   useEffect(() => {
     let url =
@@ -50,6 +52,26 @@ function App() {
         console.log(data);
         setLocationData(data);
       });
+      socket.on("connect", () => {
+        setIsConnected(true);
+      });
+      socket.on("disconnect", () => {
+        setIsConnected(false);
+      });
+      socket.on("temittsMessage", data =>{
+        console.log(data)
+      });
+
+      socket.on("temiMovementMessage", data =>{
+        console.log(data)
+        console.log(data.movementMessage);
+        if (data.movementMessage["status"] === "complete"){
+          console.log('yee')
+          textAtLocation(data.movementMessage["location"])
+        }
+      });
+
+
   }, []);
 
   const sendMessage = () => {
