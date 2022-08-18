@@ -21,6 +21,8 @@ import {
   ListItemText,
 } from "@mui/material";
 const socket = io("https://mcttemisocket.azurewebsites.net");
+//const socket = io("http://172.30.251.250:8453");
+
 
 const data = [
   {
@@ -34,6 +36,7 @@ const data = [
   { name: "Trash", icon: <ReceiptOutlined /> },
 ];
 
+
 function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [open, setOpen] = useState(false);
@@ -46,7 +49,15 @@ function App() {
     socket.on("disconnect", () => {
       setIsConnected(false);
     });
+    socket.on("temittsMessage", data =>{
+      console.log(data)
+    });
+    socket.on("temiMovementMessage", data =>{
+      console.log(data)
+    });
   });
+
+  
 
   useEffect(() => {
     let url =
