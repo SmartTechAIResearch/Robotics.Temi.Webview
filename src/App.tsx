@@ -4,7 +4,14 @@ import { iLocationData } from "../interfaces/interfaces";
 import { io } from "socket.io-client";
 import { Menu, Wifi, WifiOff } from "@mui/icons-material";
 import { red } from "@mui/material/colors";
-import { Button, Drawer, ListItemButton, ListItemText } from "@mui/material";
+import {
+  Box,
+  Button,
+  Divider,
+  Drawer,
+  ListItemButton,
+  ListItemText,
+} from "@mui/material";
 const socket = io("https://mcttemisocket.azurewebsites.net");
 
 function App() {
@@ -53,22 +60,29 @@ function App() {
     socket.emit("message", location);
   };
   const getList = () => (
-    <div style={{ width: 250 }} onClick={() => setOpen(false)}>
+    <Box
+      role="presentation"
+      style={{ width: 250 }}
+      onClick={() => setOpen(false)}
+    >
       {locationData!.map((item, index) => (
-        <ListItemButton
-          key={index}
-          onClick={(event) => {
-            console.log(item.name);
-            sendLocation(item.name);
-          }}
-        >
-          {/* <ListItemIcon>{item.icon}</ListItemIcon> */}
-          <ListItemText
-            primary={item.name.charAt(0).toUpperCase() + item.name.slice(1)}
-          />
-        </ListItemButton>
+        <>
+          <ListItemButton
+            key={index}
+            onClick={(event) => {
+              console.log(item.name);
+              sendLocation(item.name);
+            }}
+          >
+            {/* <ListItemIcon>{item.icon}</ListItemIcon> */}
+            <ListItemText
+              primary={item.name.charAt(0).toUpperCase() + item.name.slice(1)}
+            />
+          </ListItemButton>
+          <Divider />
+        </>
       ))}
-    </div>
+    </Box>
   );
 
   return (
