@@ -11,6 +11,12 @@ import { StepIconProps } from '@mui/material/StepIcon';
 import Stack from '@mui/material/Stack';
 import Check from '@mui/icons-material/Check';
 import CancelIcon from '@mui/icons-material/Cancel';
+import Rating, { IconContainerProps } from '@mui/material/Rating';
+import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
+import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
+import SentimentSatisfiedIcon from '@mui/icons-material/SentimentSatisfied';
+import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAltOutlined';
+import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
 import {
   Box,
   Button,
