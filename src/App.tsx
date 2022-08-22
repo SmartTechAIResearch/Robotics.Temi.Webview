@@ -5,13 +5,10 @@ import { io } from "socket.io-client";
 import { Menu, Wifi, WifiOff } from "@mui/icons-material";
 import { red } from "@mui/material/colors";
 import RefreshIcon from '@mui/icons-material/Refresh';
-import stepper, { Step, StepLabel, Stepper, styled } from '@mui/material'
+import { Step, StepLabel, Stepper, styled } from '@mui/material'
 import StepConnector, { stepConnectorClasses } from '@mui/material/StepConnector';
 import { StepIconProps } from '@mui/material/StepIcon';
 import Stack from '@mui/material/Stack';
-import VideoLabelIcon from '@mui/icons-material/VideoLabel';
-import SettingsIcon from '@mui/icons-material/Settings';
-import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import Check from '@mui/icons-material/Check';
 import CancelIcon from '@mui/icons-material/Cancel';
 import {
