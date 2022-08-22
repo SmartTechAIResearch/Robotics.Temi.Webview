@@ -5,7 +5,7 @@ import { io } from "socket.io-client";
 import { Menu, Wifi, WifiOff } from "@mui/icons-material";
 import { red } from "@mui/material/colors";
 import RefreshIcon from '@mui/icons-material/Refresh';
-import { Step, StepLabel, Stepper, styled } from '@mui/material'
+import { Icon, ListItemIcon, Step, StepLabel, Stepper, styled, SvgIcon } from '@mui/material'
 import StepConnector, { stepConnectorClasses } from '@mui/material/StepConnector';
 import { StepIconProps } from '@mui/material/StepIcon';
 import Stack from '@mui/material/Stack';
@@ -222,7 +222,7 @@ function App() {
               sendLocation(item.name);
             }}
           >
-            {/* <ListItemIcon>{item.icon}</ListItemIcon> */}
+            { <SvgIcon className="tester" component={CancelIcon}></SvgIcon> }
             <ListItemText
               primary={item.name.charAt(0).toUpperCase() + item.name.slice(1)}
             />
