@@ -1,5 +1,11 @@
 .App {
   text-align: center;
+  width: 100%;
+  top: 0px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+
 }
 
 .lowerleft {
@@ -10,16 +16,73 @@
   position: fixed;
   bottom: 0;
 }
+#refreshPage{
+  background-color: transparent;
+  color: black;
+}
 
+ 
 .topright {
   margin-right: 1rem;
+  margin-top: 1rem;
+  top: 0px;
+  right: 0px;
+}
+/* .topright-refresh{
+  padding: 0;
+  background-color: transparent;
+  color: black;
+  margin-right: 5rem;
   margin-top: 1rem;
   position: absolute;
   top: 0px;
   right: 0px;
-}
+}  */
+
 .topleft {
-  position: relative;
+  /* position: relative; */
   margin-left: 1rem;
   margin-top: 1rem;
+} 
+#HamburgerMenuButton{
+  padding: 0px; 
+}
+
+#stepper{
+  padding-top: 1rem;
+  margin: auto 0;
+}
+#GoToNextLocation{
+  text-align: center;
+  height: 6rem;
+  width: 13rem;
+  font-size: x-large;
+  display: block;
+  margin: 0 auto;
+  background-color: blue;
+  color:white;
+  border-radius: .7rem;
+}
+
+#ttsText{
+  font-size: 3rem;
+  width: 1200px;
+  height: 250px;
+  position: fixed;
+  bottom: 0;
+  font-weight: 600;
+  right: 0;
+}
+#cancelButton{
+  padding: 0;
+  margin: 3rem;
+  background-color: transparent;
+  margin-left: auto;
+  display: block;
+}
+#currentLocation{
+  text-align: center;
+  margin: 2rem auto;
+  display: block;
+  font-size: xx-large;
 }
