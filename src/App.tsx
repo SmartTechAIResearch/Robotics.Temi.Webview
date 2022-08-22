@@ -29,6 +29,47 @@ const socket = io("https://mcttemisocket.azurewebsites.net");
 //const socket = io("http://172.30.248.58:8453");
 
 function App() {
+  //rating//
+  const StyledRating = styled(Rating)(({ theme }) => ({
+    '& .MuiRating-iconEmpty .MuiSvgIcon-root': {
+      color: theme.palette.action.disabled,
+    },
+  }));
+  
+  const customIcons: {
+    [index: string]: {
+      icon: React.ReactElement;
+      label: string;
+    };
+  } = {
+    1: {
+      icon: <SentimentVeryDissatisfiedIcon color="error" />,
+      label: 'Very Dissatisfied',
+    },
+    2: {
+      icon: <SentimentDissatisfiedIcon color="error" />,
+      label: 'Dissatisfied',
+    },
+    3: {
+      icon: <SentimentSatisfiedIcon color="warning" />,
+      label: 'Neutral',
+    },
+    4: {
+      icon: <SentimentSatisfiedAltIcon color="success" />,
+      label: 'Satisfied',
+    },
+    5: {
+      icon: <SentimentVerySatisfiedIcon color="success" />,
+      label: 'Very Satisfied',
+    },
+  };
+  
+  function IconContainer(props: IconContainerProps) {
+    const { value, ...other } = props;
+    return <span {...other}>{customIcons[value].icon}</span>;
+  }
+  //rating//
+  //stepper//
   const QontoStepIconRoot = styled('div')<{ ownerState: { active?: boolean } }>(
     ({ theme, ownerState }) => ({
       color: theme.palette.mode === 'dark' ? theme.palette.grey[700] : '#eaeaf0',
@@ -193,6 +234,7 @@ function App() {
   );
   const steps = ["Reception", "Project-One", "Core", "the end"]
   return (
+    <>
     <div>
       <Drawer open={open} anchor={"left"} onClose={() => setOpen(false)}>
             {getList()}
@@ -228,7 +270,8 @@ function App() {
       
       
       </div>
-      <div>
+      <div className="test">
+      <div id="title">
         <div id="currentLocation">
           <h1>Project-One</h1>
         </div>
@@ -239,10 +282,66 @@ function App() {
           Go to the core
         </button>
       </div>
+    <div id="ratingList">
+    <div className="rating">
+        <label htmlFor="ProjectOneRating">Project-One</label>
+        <StyledRating id="ProjectOneRating" sx={{fontSize: 100}}
+          name="highlight-selected-only"
+          defaultValue={2}
+          IconContainerComponent={IconContainer}
+          getLabelText={(value: number) => customIcons[value].label}
+          highlightSelectedOnly
+        />
+      </div>
+    <div className="rating">
+        <label htmlFor="ProjectOneRating">AI-engineer</label>
+        <StyledRating id="ProjectOneRating" sx={{fontSize: 100}}
+          name="highlight-selected-only"
+          defaultValue={2}
+          IconContainerComponent={IconContainer}
+          getLabelText={(value: number) => customIcons[value].label}
+          highlightSelectedOnly
+        />
+      </div>
+    <div className="rating">
+        <label htmlFor="ProjectOneRating">Next-web-dev</label>
+        <StyledRating id="ProjectOneRating" sx={{fontSize: 100}}
+          name="highlight-selected-only"
+          defaultValue={2}
+          IconContainerComponent={IconContainer}
+          getLabelText={(value: number) => customIcons[value].label}
+          highlightSelectedOnly
+        />
+      </div>
+    <div className="rating">
+        <label htmlFor="ProjectOneRating">infra-engineer</label>
+        <StyledRating id="ProjectOneRating" sx={{fontSize: 100}}
+          name="highlight-selected-only"
+          defaultValue={2}
+          IconContainerComponent={IconContainer}
+          getLabelText={(value: number) => customIcons[value].label}
+          highlightSelectedOnly
+        />
+      </div>
+      <div className="rating">
+        <label htmlFor="ProjectOneRating">Smart-XR-dev</label>
+        <StyledRating id="ProjectOneRating" sx={{fontSize: 100}}
+          name="highlight-selected-only"
+          defaultValue={2}
+          IconContainerComponent={IconContainer}
+          getLabelText={(value: number) => customIcons[value].label}
+          highlightSelectedOnly
+        />
+      </div>
+    </div>
+    </div>
       <div id="ttsText">
         <p>We arrived at the core, here you can look into the Choice-trajects</p>
       </div>
+      
     </div>
+    
+  </>
   );
 }
 
