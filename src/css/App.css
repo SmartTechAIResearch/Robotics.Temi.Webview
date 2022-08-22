@@ -20,6 +20,11 @@
   background-color: transparent;
   color: black;
 }
+#cancelButton{
+  padding: 0;
+  margin: 3rem;
+  background-color: transparent;
+}
  
 .topright {
   margin-right: 1rem;

@@ -13,6 +13,7 @@ import VideoLabelIcon from '@mui/icons-material/VideoLabel';
 import SettingsIcon from '@mui/icons-material/Settings';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import Check from '@mui/icons-material/Check';
+import CancelIcon from '@mui/icons-material/Cancel';
 import {
   Box,
   Button,
@@ -223,6 +224,11 @@ function App() {
         </div>
       
       
+      </div>
+      <div>
+        <button id="cancelButton">
+          <CancelIcon sx={{ fontSize: 100, color: red[500] }}></CancelIcon>
+        </button>
       </div>
     </div>
   );
