@@ -201,7 +201,7 @@ function App() {
           <Button id="HamburgerMenuButton" onClick={() => setOpen(true)}>
             <Menu className="topleft" sx={{ fontSize: 40, color: "black" }} />
           </Button>
-          <Stack  sx={{ width: '50%' }} spacing={4}>
+          <Stack  sx={{ width: '70%' }} spacing={4}>
           <Stepper id="stepper" alternativeLabel activeStep={1} connector={<QontoConnector />}>
             {steps.map((label) => (
               <Step key={label}>
@@ -226,9 +226,18 @@ function App() {
       
       </div>
       <div>
+        <div id="currentLocation">
+          <h1>Project-One</h1>
+        </div>
         <button id="cancelButton">
           <CancelIcon sx={{ fontSize: 100, color: red[500] }}></CancelIcon>
         </button>
+        <button id="GoToNextLocation">
+          Go to the core
+        </button>
+      </div>
+      <div id="ttsText">
+        <p>We arrived at the core, here you can look into the Choice-trajects</p>
       </div>
     </div>
   );
