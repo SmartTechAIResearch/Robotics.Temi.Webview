@@ -233,7 +233,7 @@ function App() {
               sendLocation(item.name);
             }}
           >
-            { <SvgIcon className="tester" component={item.icon === "AccountBalanceIcon" ? AccountBalanceIcon : item.icon === "ForumIcon" ? RefreshIcon : item.icon === "WcIcon" ? WcIcon : item.icon === "ElevatorIcon" ? ElevatorIcon : item.icon === "PowerIcon" ? PowerIcon : CancelIcon}></SvgIcon> }
+            { <SvgIcon className="tester" component={item.icon === "AccountBalanceIcon" ? AccountBalanceIcon : item.icon === "ForumIcon" ? ForumIcon : item.icon === "WcIcon" ? WcIcon : item.icon === "ElevatorIcon" ? ElevatorIcon : item.icon === "PowerIcon" ? PowerIcon : CancelIcon}></SvgIcon> }
             <ListItemText
               primary={item.name.charAt(0).toUpperCase() + item.name.slice(1)}
             />
@@ -246,7 +246,7 @@ function App() {
   const steps = ["Reception", "Project-One", "Core", "the end"]
   return (
     <>
-    <div>
+    <div className="hidden">
       <Drawer open={open} anchor={"left"} onClose={() => setOpen(false)}>
             {getList()}
           </Drawer>
