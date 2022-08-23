@@ -17,6 +17,12 @@ import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied
 import SentimentSatisfiedIcon from '@mui/icons-material/SentimentSatisfied';
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAltOutlined';
 import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import ForumIcon from '@mui/icons-material/Forum';
+import WcIcon from '@mui/icons-material/Wc';
+import ElevatorIcon from '@mui/icons-material/Elevator';
+import PowerIcon from '@mui/icons-material/Power';
+
 import {
   Box,
   Button,
@@ -227,7 +233,7 @@ function App() {
               sendLocation(item.name);
             }}
           >
-            { <SvgIcon className="tester" component={item.icon === "CancelIcon" ? CancelIcon : item.icon === "Refreshicon" ? RefreshIcon : WifiOff}></SvgIcon> }
+            { <SvgIcon className="tester" component={item.icon === "AccountBalanceIcon" ? AccountBalanceIcon : item.icon === "ForumIcon" ? RefreshIcon : item.icon === "WcIcon" ? WcIcon : item.icon === "ElevatorIcon" ? ElevatorIcon : item.icon === "PowerIcon" ? PowerIcon : CancelIcon}></SvgIcon> }
             <ListItemText
               primary={item.name.charAt(0).toUpperCase() + item.name.slice(1)}
             />
