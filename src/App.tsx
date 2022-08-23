@@ -35,6 +35,7 @@ import {
 const socket = io("http://172.30.248.58:8453");
 
 function App() {
+  const [stepperCounter, setStepperCounter] = useState(0);
   const tessIcon = CancelIcon;
   //rating//
   const StyledRating = styled(Rating)(({ theme }) => ({
@@ -246,7 +247,7 @@ function App() {
   const steps = ["Reception", "Project-One", "Core", "the end"]
   return (
     <>
-    <div className="hidden">
+    <div className="">
       <Drawer open={open} anchor={"left"} onClose={() => setOpen(false)}>
             {getList()}
           </Drawer>
@@ -258,7 +259,7 @@ function App() {
             <Menu className="topleft" sx={{ fontSize: 40, color: "black" }} />
           </Button>
           <Stack  sx={{ width: '70%' }} spacing={4}>
-          <Stepper id="stepper" alternativeLabel activeStep={1} connector={<QontoConnector />}>
+          <Stepper id="stepper" alternativeLabel activeStep={stepperCounter} connector={<QontoConnector />}>
             {steps.map((label) => (
               <Step key={label}>
                 <StepLabel StepIconComponent={QontoStepIcon}>{label}</StepLabel>
@@ -289,8 +290,11 @@ function App() {
         <button className="hidden" id="cancelButton">
           <CancelIcon sx={{ fontSize: 100, color: red[500] }}></CancelIcon>
         </button>
-        <button id="GoToNextLocation">
-          Go to the core
+        <button id="GoToNextLocation" onClick={() =>{
+          console.log("btn pressed");
+           setStepperCounter(stepperCounter + 1); 
+           }}>
+          Go to {steps[stepperCounter]}
         </button>
       </div>
     <div className="hidden" id="ratingList">

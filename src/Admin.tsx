@@ -1,7 +1,7 @@
 import "./css/Admin.css";
 function Admin(){
     return (
-        <div className="admin">
+        <div className="admin hidden">
             <button id="BackButton">Back</button>
             <div className="adminTitle">
                 <h1>Adminpanel</h1>
