@@ -135,6 +135,7 @@ function App() {
   const [currentLocation, setCurrentLocation] = useState<iLocationData>();
   const [temiTtsData, setTemiTtsData] = useState<any>();
   const [temiMovementData, setTemiMovementData] = useState<any>();
+  const [currentSentence, setCurrentSentence] = useState<string>("");
 
   useEffect(() => {
     // const textAtLocation = (location: any) => {
@@ -229,6 +230,7 @@ function App() {
           var TextToSay = data.textList;
           console.log(TextToSay);
           socket.emit("tts", TextToSay[0]);
+          setCurrentSentence(TextToSay[0]);
 
           // TextToSay.forEach((text) => {
           //   socket.emit("tts", text);
@@ -269,8 +271,16 @@ function App() {
               ) + 1
             ]
           );
+          setCurrentSentence(
+            currentLocation!.textList[
+              currentLocation!.textList.indexOf(
+                temiTtsData.temiTtsMessage.text
+              ) + 1
+            ]
+          );
         } else {
           setCurrentLocation(undefined);
+          setCurrentSentence("");
         }
       }
     };
@@ -518,9 +528,7 @@ function App() {
           </div>
         </div>
         <div id="ttsText">
-          <p>
-            We arrived at the core, here you can look into the Choice-trajects
-          </p>
+          <p>{currentSentence}</p>
         </div>
       </div>
     </>
