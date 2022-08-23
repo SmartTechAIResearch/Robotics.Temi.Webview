@@ -1,6 +1,7 @@
 export interface iLocationData {
   id: string;
   name: string;
+  alias: string;
   textList: Array<string>;
   icon : string;
 }

@@ -393,7 +393,7 @@ function App() {
               ></SvgIcon>
             }
             <ListItemText
-              primary={item.name.charAt(0).toUpperCase() + item.name.slice(1)}
+              primary={item.alias.charAt(0).toUpperCase() + item.name.slice(1)}
             />
           </ListItemButton>
           <Divider />
@@ -401,7 +401,7 @@ function App() {
       ))}
     </Box>
   );
-  const steps = ["bank", "forum", "core", "lift"];
+  const steps = ["reception", "project", "core", "inter"];
   return (
     <>
       <div className="">
