@@ -151,12 +151,7 @@ function App() {
     });
   };
 
-  const sendMessage = () => {
-    socket.emit("message", "home base");
-  };
-  const sendBank = () => {
-    socket.emit("message", "bank");
-  };
+
   const sendLocation = (location: string) => {
     socket.emit("message", location);
   };
