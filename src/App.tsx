@@ -72,13 +72,13 @@ function App() {
     },
   };
   
-  function IconContainer(props: IconContainerProps) {
+  const IconContainer =(props: IconContainerProps) =>{
     const { value, ...other } = props;
     return <span {...other}>{customIcons[value].icon}</span>;
   }
   //rating//
   //stepper//
-  const QontoStepIconRoot = styled('div')<{ ownerState: { active?: boolean } }>(
+  const StepIcon = styled('div')<{ ownerState: { active?: boolean } }>(
     ({ theme, ownerState }) => ({
       color: theme.palette.mode === 'dark' ? theme.palette.grey[700] : '#eaeaf0',
       display: 'flex',
@@ -101,21 +101,21 @@ function App() {
     }),
   );
   
-  function QontoStepIcon(props: StepIconProps) {
+  const QontoStepIcon= (props: StepIconProps) =>{
     const { active, completed, className } = props;
   
     return (
-      <QontoStepIconRoot ownerState={{ active }} className={className}>
+      <StepIcon ownerState={{ active }} className={className}>
         {completed ? (
           <Check className="QontoStepIcon-completedIcon" />
         ) : (
           <div className="QontoStepIcon-circle" />
         )}
-      </QontoStepIconRoot>
+      </StepIcon>
     );
   }
   
-  const QontoConnector = styled(StepConnector)(({ theme }) => {
+  const StepperConnector = styled(StepConnector)(({ theme }) => {
     return ({
       [`&.${stepConnectorClasses.alternativeLabel}`]: {
         top: 10,
@@ -213,6 +213,10 @@ function App() {
     socket.emit("message", "bank");
   };
   const sendLocation = (location: string) => {
+    if (steps.includes(location)){
+
+      setStepperCounter(steps.indexOf(location));
+    }
     socket.emit("message", location);
   };
   const getList = () => (
@@ -226,10 +230,7 @@ function App() {
           <ListItemButton
             key={index}
             onClick={(event) => {
-              console.log(item.name);
-              console.log(item.icon);
               if (item.icon === "CancelIcon"){
-                console.log("true");
               }
               sendLocation(item.name);
             }}
@@ -244,7 +245,7 @@ function App() {
       ))}
     </Box>
   );
-  const steps = ["Reception", "Project-One", "Core", "the end"]
+  const steps = ["bank", "forum", "core", "lift"]
   return (
     <>
     <div className="">
@@ -259,7 +260,7 @@ function App() {
             <Menu className="topleft" sx={{ fontSize: 40, color: "black" }} />
           </Button>
           <Stack  sx={{ width: '70%' }} spacing={4}>
-          <Stepper id="stepper" alternativeLabel activeStep={stepperCounter} connector={<QontoConnector />}>
+          <Stepper id="stepper" alternativeLabel activeStep={stepperCounter} connector={<StepperConnector />}>
             {steps.map((label) => (
               <Step key={label}>
                 <StepLabel StepIconComponent={QontoStepIcon}>{label}</StepLabel>
@@ -291,10 +292,9 @@ function App() {
           <CancelIcon sx={{ fontSize: 100, color: red[500] }}></CancelIcon>
         </button>
         <button id="GoToNextLocation" onClick={() =>{
-          console.log("btn pressed");
            setStepperCounter(stepperCounter + 1); 
            }}>
-          Go to {steps[stepperCounter]}
+          Go to {stepperCounter >= steps.length -1? "finish": steps[stepperCounter +1]}
         </button>
       </div>
     <div className="hidden" id="ratingList">
