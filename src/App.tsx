@@ -25,10 +25,11 @@ import {
   ListItemButton,
   ListItemText,
 } from "@mui/material";
-const socket = io("https://mcttemisocket.azurewebsites.net");
-//const socket = io("http://172.30.248.58:8453");
+//const socket = io("https://mcttemisocket.azurewebsites.net");
+const socket = io("http://172.30.248.58:8453");
 
 function App() {
+  const tessIcon = CancelIcon;
   //rating//
   const StyledRating = styled(Rating)(({ theme }) => ({
     '& .MuiRating-iconEmpty .MuiSvgIcon-root': {
@@ -219,10 +220,14 @@ function App() {
             key={index}
             onClick={(event) => {
               console.log(item.name);
+              console.log(item.icon);
+              if (item.icon === "CancelIcon"){
+                console.log("true");
+              }
               sendLocation(item.name);
             }}
           >
-            { <SvgIcon className="tester" component={CancelIcon}></SvgIcon> }
+            { <SvgIcon className="tester" component={item.icon === "CancelIcon" ? CancelIcon : item.icon === "Refreshicon" ? RefreshIcon : WifiOff}></SvgIcon> }
             <ListItemText
               primary={item.name.charAt(0).toUpperCase() + item.name.slice(1)}
             />
@@ -275,14 +280,14 @@ function App() {
         <div id="currentLocation">
           <h1>Project-One</h1>
         </div>
-        <button id="cancelButton">
+        <button className="hidden" id="cancelButton">
           <CancelIcon sx={{ fontSize: 100, color: red[500] }}></CancelIcon>
         </button>
         <button id="GoToNextLocation">
           Go to the core
         </button>
       </div>
-    <div id="ratingList">
+    <div className="hidden" id="ratingList">
     <div className="rating">
         <label htmlFor="ProjectOneRating">Project-One</label>
         <StyledRating id="ProjectOneRating" sx={{fontSize: 100}}

@@ -121,3 +121,7 @@
   margin: 0%;
   margin-right: 10px;
 }
+.hidden{
+  display: none;
+  visibility: hidden;
+}
