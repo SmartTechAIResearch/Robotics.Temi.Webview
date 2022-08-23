@@ -1,11 +1,14 @@
 import "./css/Admin.css";
 function Admin(){
     return (
-        <div>
-            <div className="admin">
+        <div className="admin">
+            <button id="BackButton">Back</button>
+            <div className="adminTitle">
                 <h1>Adminpanel</h1>
             </div>
-            <button>Shutdown Robot</button>
+            <div>
+                <button>Shutdown Robot</button>
+            </div>
         </div>
     );
 }
