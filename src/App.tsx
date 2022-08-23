@@ -456,6 +456,7 @@ function App() {
               id="GoToNextLocation"
               onClick={() => {
                 setStepperCounter(stepperCounter + 1);
+                sendLocation(steps[stepperCounter+1])
               }}
             >
               Go to{" "}
