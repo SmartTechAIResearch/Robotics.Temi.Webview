@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import "./css/index.css";
 import App from "./App";
 import reportWebVitals from "./WebVitals/reportWebVitals";
+import Admin from "./Admin";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -10,7 +11,9 @@ const root = ReactDOM.createRoot(
 root.render(
   <>
     <App />
+    <Admin />
   </>
+  
 );
 
 // If you want to start measuring performance in your app, pass a function

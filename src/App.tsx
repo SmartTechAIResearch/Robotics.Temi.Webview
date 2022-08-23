@@ -4,15 +4,25 @@ import { iLocationData } from "../interfaces/interfaces";
 import { io } from "socket.io-client";
 import { Menu, Wifi, WifiOff } from "@mui/icons-material";
 import { red } from "@mui/material/colors";
-import RefreshIcon from "@mui/icons-material/Refresh";
-import { Step, StepLabel, Stepper, styled } from "@mui/material";
-import StepConnector, {
-  stepConnectorClasses,
-} from "@mui/material/StepConnector";
-import { StepIconProps } from "@mui/material/StepIcon";
-import Stack from "@mui/material/Stack";
-import Check from "@mui/icons-material/Check";
-import CancelIcon from "@mui/icons-material/Cancel";
+import RefreshIcon from '@mui/icons-material/Refresh';
+import { Icon, ListItemIcon, Step, StepLabel, Stepper, styled, SvgIcon } from '@mui/material'
+import StepConnector, { stepConnectorClasses } from '@mui/material/StepConnector';
+import { StepIconProps } from '@mui/material/StepIcon';
+import Stack from '@mui/material/Stack';
+import Check from '@mui/icons-material/Check';
+import CancelIcon from '@mui/icons-material/Cancel';
+import Rating, { IconContainerProps } from '@mui/material/Rating';
+import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
+import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
+import SentimentSatisfiedIcon from '@mui/icons-material/SentimentSatisfied';
+import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAltOutlined';
+import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import ForumIcon from '@mui/icons-material/Forum';
+import WcIcon from '@mui/icons-material/Wc';
+import ElevatorIcon from '@mui/icons-material/Elevator';
+import PowerIcon from '@mui/icons-material/Power';
+
 import {
   Box,
   Button,
@@ -25,6 +35,111 @@ import {
 
 function App() {
   const socket = io("https://mcttemisocket.azurewebsites.net");
+  const [stepperCounter, setStepperCounter] = useState(0);
+  const tessIcon = CancelIcon;
+  //rating//
+  const StyledRating = styled(Rating)(({ theme }) => ({
+    '& .MuiRating-iconEmpty .MuiSvgIcon-root': {
+      color: theme.palette.action.disabled,
+    },
+  }));
+  
+  const customIcons: {
+    [index: string]: {
+      icon: React.ReactElement;
+      label: string;
+    };
+  } = {
+    1: {
+      icon: <SentimentVeryDissatisfiedIcon color="error" />,
+      label: 'Very Dissatisfied',
+    },
+    2: {
+      icon: <SentimentDissatisfiedIcon color="error" />,
+      label: 'Dissatisfied',
+    },
+    3: {
+      icon: <SentimentSatisfiedIcon color="warning" />,
+      label: 'Neutral',
+    },
+    4: {
+      icon: <SentimentSatisfiedAltIcon color="success" />,
+      label: 'Satisfied',
+    },
+    5: {
+      icon: <SentimentVerySatisfiedIcon color="success" />,
+      label: 'Very Satisfied',
+    },
+  };
+  
+  const IconContainer =(props: IconContainerProps) =>{
+    const { value, ...other } = props;
+    return <span {...other}>{customIcons[value].icon}</span>;
+  }
+  //rating//
+  //stepper//
+  const StepIcon = styled('div')<{ ownerState: { active?: boolean } }>(
+    ({ theme, ownerState }) => ({
+      color: theme.palette.mode === 'dark' ? theme.palette.grey[700] : '#eaeaf0',
+      display: 'flex',
+      height: 22,
+      alignItems: 'center',
+      ...(ownerState.active && {
+        color: '#784af4',
+      }),
+      '& .QontoStepIcon-completedIcon': {
+        color: '#784af4',
+        zIndex: 1,
+        fontSize: 18,
+      },
+      '& .QontoStepIcon-circle': {
+        width: 8,
+        height: 8,
+        borderRadius: '50%',
+        backgroundColor: 'currentColor',
+      },
+    }),
+  );
+  
+  const QontoStepIcon= (props: StepIconProps) =>{
+    const { active, completed, className } = props;
+  
+    return (
+      <StepIcon ownerState={{ active }} className={className}>
+        {completed ? (
+          <Check className="QontoStepIcon-completedIcon" />
+        ) : (
+          <div className="QontoStepIcon-circle" />
+        )}
+      </StepIcon>
+    );
+  }
+  
+  const StepperConnector = styled(StepConnector)(({ theme }) => {
+    return ({
+      [`&.${stepConnectorClasses.alternativeLabel}`]: {
+        top: 10,
+        left: 'calc(-50% + 16px)',
+        right: 'calc(50% + 16px)',
+      },
+      [`&.${stepConnectorClasses.active}`]: {
+        [`& .${stepConnectorClasses.line}`]: {
+          borderColor: '#784af4',
+        },
+      },
+      [`&.${stepConnectorClasses.completed}`]: {
+        [`& .${stepConnectorClasses.line}`]: {
+          borderColor: '#784af4',
+        },
+      },
+      [`& .${stepConnectorClasses.line}`]: {
+        borderColor: theme.palette.mode === 'dark' ? theme.palette.grey[800] : '#eaeaf0',
+        borderTopWidth: 3,
+        borderRadius: 1,
+      },
+    });
+  });
+  
 
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [open, setOpen] = useState(false);
@@ -238,6 +353,10 @@ function App() {
   });
 
   const sendLocation = (location: string) => {
+    if (steps.includes(location)){
+
+      setStepperCounter(steps.indexOf(location));
+    }
     socket.emit("message", location);
   };
   const getList = () => (
@@ -251,11 +370,12 @@ function App() {
           <ListItemButton
             key={index}
             onClick={(event) => {
-              console.log(item.name);
+              if (item.icon === "CancelIcon"){
+              }
               sendLocation(item.name);
             }}
           >
-            {/* <ListItemIcon>{item.icon}</ListItemIcon> */}
+            { <SvgIcon className="tester" component={item.icon === "AccountBalanceIcon" ? AccountBalanceIcon : item.icon === "ForumIcon" ? ForumIcon : item.icon === "WcIcon" ? WcIcon : item.icon === "ElevatorIcon" ? ElevatorIcon : item.icon === "PowerIcon" ? PowerIcon : CancelIcon}></SvgIcon> }
             <ListItemText
               primary={item.name.charAt(0).toUpperCase() + item.name.slice(1)}
             />
@@ -265,25 +385,21 @@ function App() {
       ))}
     </Box>
   );
-  const steps = ["Reception", "Project-One", "Core", "the end"];
+  const steps = ["bank", "forum", "core", "lift"]
   return (
-    <div>
+    <>
+    <div className="">
       <Drawer open={open} anchor={"left"} onClose={() => setOpen(false)}>
         {getList()}
       </Drawer>
       <img src="/mctLogo.jpg" alt="mctLgo" className="lowerleft"></img>
 
       <div className="App">
-        <Button id="HamburgerMenuButton" onClick={() => setOpen(true)}>
-          <Menu className="topleft" sx={{ fontSize: 40, color: "black" }} />
-        </Button>
-        <Stack sx={{ width: "70%" }} spacing={4}>
-          <Stepper
-            id="stepper"
-            alternativeLabel
-            activeStep={1}
-            connector={<QontoConnector />}
-          >
+          <Button id="HamburgerMenuButton" onClick={() => setOpen(true)}>
+            <Menu className="topleft" sx={{ fontSize: 40, color: "black" }} />
+          </Button>
+          <Stack  sx={{ width: '70%' }} spacing={4}>
+          <Stepper id="stepper" alternativeLabel activeStep={stepperCounter} connector={<StepperConnector />}>
             {steps.map((label) => (
               <Step key={label}>
                 <StepLabel StepIconComponent={QontoStepIcon}>{label}</StepLabel>
@@ -305,21 +421,82 @@ function App() {
           )}
         </div>
       </div>
-      <div>
+      <div className="test">
+      <div id="title">
         <div id="currentLocation">
           <h1>Project-One</h1>
         </div>
-        <button id="cancelButton">
+        <button className="hidden" id="cancelButton">
           <CancelIcon sx={{ fontSize: 100, color: red[500] }}></CancelIcon>
         </button>
-        <button id="GoToNextLocation">Go to the core</button>
+        <button id="GoToNextLocation" onClick={() =>{
+           setStepperCounter(stepperCounter + 1); 
+           }}>
+          Go to {stepperCounter >= steps.length -1? "finish": steps[stepperCounter +1]}
+        </button>
       </div>
+    <div className="hidden" id="ratingList">
+    <div className="rating">
+        <label htmlFor="ProjectOneRating">Project-One</label>
+        <StyledRating id="ProjectOneRating" sx={{fontSize: 100}}
+          name="highlight-selected-only"
+          defaultValue={2}
+          IconContainerComponent={IconContainer}
+          getLabelText={(value: number) => customIcons[value].label}
+          highlightSelectedOnly
+        />
+      </div>
+    <div className="rating">
+        <label htmlFor="ProjectOneRating">AI-engineer</label>
+        <StyledRating id="ProjectOneRating" sx={{fontSize: 100}}
+          name="highlight-selected-only"
+          defaultValue={2}
+          IconContainerComponent={IconContainer}
+          getLabelText={(value: number) => customIcons[value].label}
+          highlightSelectedOnly
+        />
+      </div>
+    <div className="rating">
+        <label htmlFor="ProjectOneRating">Next-web-dev</label>
+        <StyledRating id="ProjectOneRating" sx={{fontSize: 100}}
+          name="highlight-selected-only"
+          defaultValue={2}
+          IconContainerComponent={IconContainer}
+          getLabelText={(value: number) => customIcons[value].label}
+          highlightSelectedOnly
+        />
+      </div>
+    <div className="rating">
+        <label htmlFor="ProjectOneRating">infra-engineer</label>
+        <StyledRating id="ProjectOneRating" sx={{fontSize: 100}}
+          name="highlight-selected-only"
+          defaultValue={2}
+          IconContainerComponent={IconContainer}
+          getLabelText={(value: number) => customIcons[value].label}
+          highlightSelectedOnly
+        />
+      </div>
+      <div className="rating">
+        <label htmlFor="ProjectOneRating">Smart-XR-dev</label>
+        <StyledRating id="ProjectOneRating" sx={{fontSize: 100}}
+          name="highlight-selected-only"
+          defaultValue={2}
+          IconContainerComponent={IconContainer}
+          getLabelText={(value: number) => customIcons[value].label}
+          highlightSelectedOnly
+        />
+      </div>
+    </div>
+    </div>
       <div id="ttsText">
         <p>
           We arrived at the core, here you can look into the Choice-trajects
         </p>
       </div>
+      
     </div>
+    
+  </>
   );
 }
 

@@ -46,6 +46,7 @@
 } 
 #HamburgerMenuButton{
   padding: 0px; 
+  margin-right: 2rem;
 }
 
 #stepper{
@@ -66,7 +67,7 @@
 
 #ttsText{
   font-size: 3rem;
-  width: 1200px;
+  width: 65%;
   height: 250px;
   position: fixed;
   bottom: 0;
@@ -75,9 +76,9 @@
 }
 #cancelButton{
   padding: 0;
-  margin: 3rem;
+  margin: 0rem;
   background-color: transparent;
-  margin-left: auto;
+  margin-right: auto;
   display: block;
 }
 #currentLocation{
@@ -86,3 +87,42 @@
   display: block;
   font-size: xx-large;
 }
+
+/* aside */
+
+.rating{
+  margin-left: 2rem;
+}
+.rating label {
+  font-size: x-large;
+  font-weight: 500;
+  display: block;
+  margin: .1rem auto 1rem 1rem;
+}
+#title{
+  margin-left: 22%;
+}
+#ratingList{
+  margin-top: 4rem;
+  width: 100%;
+  height: 550px;
+}
+.test{
+  display: grid;
+  grid-template-columns: minmax(200px, 1fr) 22%;
+  grid-gap: 10px;
+
+}
+
+.tester{
+  width: 20px;
+  height: 20px;
+  padding: 0%;
+  margin: 0%;
+  margin-right: 10px;
+}
+.hidden{
+  display: none;
+  visibility: hidden;
+}
+
