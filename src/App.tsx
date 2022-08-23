@@ -101,20 +101,7 @@ function App() {
     }),
   );
   
-  const QontoStepIcon= (props: StepIconProps) =>{
-    const { active, completed, className } = props;
-  
-    return (
-      <StepIcon ownerState={{ active }} className={className}>
-        {completed ? (
-          <Check className="QontoStepIcon-completedIcon" />
-        ) : (
-          <div className="QontoStepIcon-circle" />
-        )}
-      </StepIcon>
-    );
-  }
-  
+
   const StepperConnector = styled(StepConnector)(({ theme }) => {
     return ({
       [`&.${stepConnectorClasses.alternativeLabel}`]: {
