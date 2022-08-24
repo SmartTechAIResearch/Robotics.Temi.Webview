@@ -38,6 +38,10 @@ import {
 function App() {
   const socket = io("https://mcttemisocket.azurewebsites.net");
   const [stepperCounter, setStepperCounter] = useState(0);
+  const [ratingState, setRatingState] = useState("hidden");
+  const [nextButtonState, setNextButtonState] = useState("");
+
+
   // const tessIcon = CancelIcon;
   //rating//
   const StyledRating = styled(Rating)(({ theme }) => ({
@@ -376,7 +380,7 @@ function App() {
           >
             {
               <SvgIcon
-                className="tester"
+                className="svgClass"
                 component={
                   item.icon === "AccountBalanceIcon"
                     ? AccountBalanceIcon
@@ -401,6 +405,12 @@ function App() {
       ))}
     </Box>
   );
+  const showRating= () => {
+    setRatingState("");
+    setNextButtonState("hidden");
+    console.log(nextButtonState);
+    console.log(ratingState);
+  };
   const steps = ["reception", "project", "core", "inter"];
   return (
     <>
@@ -453,10 +463,17 @@ function App() {
               <CancelIcon sx={{ fontSize: 100, color: red[500] }}></CancelIcon>
             </button>
             <button
+              className={nextButtonState}
               id="GoToNextLocation"
               onClick={() => {
                 setStepperCounter(stepperCounter + 1);
-                sendLocation(steps[stepperCounter+1])
+                console.log(stepperCounter)
+                console.log(steps.length)
+                if (stepperCounter < steps.length -1){
+                  sendLocation(steps[stepperCounter+1])
+                }else{
+                  showRating();
+                }
               }}
             >
               Go to{" "}
@@ -464,8 +481,7 @@ function App() {
                 ? "finish"
                 : steps[stepperCounter + 1]}
             </button>
-          </div>
-          <div className="hidden" id="ratingList">
+            <div className={ratingState} id="ratingList">
             <div className="rating">
               <label htmlFor="ProjectOneRating">Project-One</label>
               <StyledRating
@@ -527,6 +543,8 @@ function App() {
               />
             </div>
           </div>
+          </div>
+          
         </div>
         <div id="ttsText">
           <p>{currentSentence}</p>
