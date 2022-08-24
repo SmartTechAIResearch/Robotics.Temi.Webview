@@ -305,11 +305,11 @@ function App() {
       "& .QontoStepIcon-completedIcon": {
         color: "#784af4",
         zIndex: 1,
-        fontSize: 18,
+        fontSize: 25,
       },
       "& .QontoStepIcon-circle": {
-        width: 8,
-        height: 8,
+        width: 16,
+        height: 16,
         borderRadius: "50%",
         backgroundColor: "currentColor",
       },
@@ -424,7 +424,24 @@ function App() {
           <Button id="HamburgerMenuButton" onClick={() => setOpen(true)}>
             <Menu className="topleft" sx={{ fontSize: 40, color: "black" }} />
           </Button>
-          <Stack sx={{ width: "70%" }} spacing={4}>
+          
+          <div>
+            <button id="refreshPage" onClick={() => window.location.reload()}>
+              <RefreshIcon sx={{ fontSize: 40 }}></RefreshIcon>
+            </button>
+            {isConnected ? (
+              <Wifi className="topright" sx={{ fontSize: 40 }} />
+            ) : (
+              <WifiOff
+                className="topright"
+                sx={{ fontSize: 40, color: red[500] }}
+              />
+            )}
+          </div>
+          
+        </div>
+        <div>
+        <Stack sx={{ width: "100%" }} spacing={4}>
             <Stepper
               id="stepper"
               alternativeLabel
@@ -440,25 +457,12 @@ function App() {
               ))}
             </Stepper>
           </Stack>
-          <div>
-            <button id="refreshPage" onClick={() => window.location.reload()}>
-              <RefreshIcon sx={{ fontSize: 40 }}></RefreshIcon>
-            </button>
-            {isConnected ? (
-              <Wifi className="topright" sx={{ fontSize: 40 }} />
-            ) : (
-              <WifiOff
-                className="topright"
-                sx={{ fontSize: 40, color: red[500] }}
-              />
-            )}
-          </div>
         </div>
         <div className="test">
           <div id="title">
-            <div id="currentLocation">
+            {/* <div id="currentLocation">
               <h1>Project-One</h1>
-            </div>
+            </div> */}
             <button className="hidden" id="cancelButton">
               <CancelIcon sx={{ fontSize: 100, color: red[500] }}></CancelIcon>
             </button>
