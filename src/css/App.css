@@ -119,3 +119,11 @@
   display: none;
   visibility: hidden;
 }
+.css-qivjh0-MuiStepLabel-label.MuiStepLabel-alternativeLabel{
+  font-size: x-large;
+}
+
+.css-qivjh0-MuiStepLabel-label.Mui-active{
+  font-size: xx-large;
+  font-weight: 700;
+}
