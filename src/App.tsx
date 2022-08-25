@@ -34,7 +34,9 @@ function App() {
   const audio = useMemo(() => new Audio("/sound.opus"), []);
   const socket = io("https://mcttemisocket.azurewebsites.net");
   const [stepperCounter, setStepperCounter] = useState(0);
-  const [nextButtonState, setNextButtonState] = useState("");
+  // const [nextButtonState, setNextButtonState] = useState("");
+  // const [qrCodeState, setQrCodeState] = useState("hidden");
+
   const [soundCounter, setSoundCounter] = useState(0);
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [open, setOpen] = useState(false);
@@ -43,6 +45,7 @@ function App() {
   const [temiTtsData, setTemiTtsData] = useState<any>();
   const [temiMovementData, setTemiMovementData] = useState<any>();
   const [currentSentence, setCurrentSentence] = useState<string>("");
+  const [isLastPage, setIsLastPage] = useState<boolean>(false);
 
   useEffect(() => {
     // const textAtLocation = (location: any) => {
@@ -397,11 +400,7 @@ function App() {
       ))}
     </Box>
   );
-  const showRating = () => {
-    // setRatingState("");
-    setNextButtonState("hidden");
-    console.log(nextButtonState);
-  };
+
   const steps = ["reception", "project", "core", "inter"];
   return (
     <>
@@ -460,8 +459,11 @@ function App() {
             <button className="hidden" id="cancelButton">
               <CancelIcon sx={{ fontSize: 100, color: red[500] }}></CancelIcon>
             </button>
-            <button
-              className={nextButtonState}
+            {isLastPage ? (
+            <img src="/qr.jpg" 
+            id="qr" alt="mctLgo"></img>
+            ) : (
+              <button
               id="GoToNextLocation"
               onClick={() => {
                 setStepperCounter(stepperCounter + 1);
@@ -470,7 +472,7 @@ function App() {
                 if (stepperCounter < steps.length - 1) {
                   sendLocation(steps[stepperCounter + 1]);
                 } else {
-                  showRating();
+                  setIsLastPage(true);
                 }
               }}
             >
@@ -479,6 +481,9 @@ function App() {
                 ? "finish"
                 : steps[stepperCounter + 1]}
             </button>
+            )}
+
+
           </div>
         </div>
         <div id="ttsDiv">
