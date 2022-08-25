@@ -260,6 +260,11 @@ function App() {
   //     },
   //   }),
   // );
+  const styles = (theme) => ({
+    listItemText: {
+      fontSize: "0.7em", //Insert your required size
+    },
+  });
 
   const StepperConnector = styled(StepConnector)(({ theme }) => {
     return {
@@ -398,6 +403,7 @@ function App() {
               ></SvgIcon>
             }
             <ListItemText
+              primaryTypographyProps={{ fontSize: "20px" }}
               primary={item.alias.charAt(0).toUpperCase() + item.alias.slice(1)}
             />
           </ListItemButton>
@@ -479,8 +485,7 @@ function App() {
               <CancelIcon sx={{ fontSize: 100, color: red[500] }}></CancelIcon>
             </button>
             {isLastPage ? (
-            <img src="/qr.jpg" 
-            id="qr" alt="mctLgo"></img>
+              <img src="/qr.jpg" id="qr" alt="mctLgo"></img>
             ) : (
               <button
               id="GoToNextLocation"
@@ -502,8 +507,6 @@ function App() {
                 : steps[stepperCounter + 1]}
             </button>
             )}
-
-
           </div>
         </div>
         <div id="ttsDiv">
