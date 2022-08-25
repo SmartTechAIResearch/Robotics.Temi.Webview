@@ -260,11 +260,6 @@ function App() {
   //     },
   //   }),
   // );
-  const styles = (theme) => ({
-    listItemText: {
-      fontSize: "0.7em", //Insert your required size
-    },
-  });
 
   const StepperConnector = styled(StepConnector)(({ theme }) => {
     return {
@@ -362,8 +357,7 @@ function App() {
   const sendLocation = (location: string) => {
     if (steps.includes(location)) {
       setStepperCounter(steps.indexOf(location));
-    }
-    else if (steps.includes(convertName(location))){
+    } else if (steps.includes(convertName(location))) {
       setStepperCounter(steps.indexOf(convertName(location)));
     }
     socket.emit("message", location);
@@ -412,18 +406,14 @@ function App() {
       ))}
     </Box>
   );
-  const convertAlias = (alias: any) =>{
-
-    for (let location of locationData){
-      if (location.alias === alias)
-        return(location.name)
+  const convertAlias = (alias: any) => {
+    for (let location of locationData) {
+      if (location.alias === alias) return location.name;
     }
-  }; 
-  const convertName = (name: any) =>{
-
-    for (let location of locationData){
-      if (location.name === name)
-        return(location.alias)
+  };
+  const convertName = (name: any) => {
+    for (let location of locationData) {
+      if (location.name === name) return location.alias;
     }
   };
   const steps = ["reception", "Project-One", "core", "international"];
@@ -488,24 +478,24 @@ function App() {
               <img src="/qr.jpg" id="qr" alt="mctLgo"></img>
             ) : (
               <button
-              id="GoToNextLocation"
-              onClick={() => {
-                setStepperCounter(stepperCounter + 1);
-                console.log("steppercounter")
-                console.log(stepperCounter);
-                console.log(steps.length);
-                if (stepperCounter < steps.length - 1) {
-                  sendLocation(convertAlias(steps[stepperCounter + 1]));
-                } else {
-                  setIsLastPage(true);
-                }
-              }}
-            >
-              Go to{" "}
-              {stepperCounter >= steps.length - 1
-                ? "finish"
-                : steps[stepperCounter + 1]}
-            </button>
+                id="GoToNextLocation"
+                onClick={() => {
+                  setStepperCounter(stepperCounter + 1);
+                  console.log("steppercounter");
+                  console.log(stepperCounter);
+                  console.log(steps.length);
+                  if (stepperCounter < steps.length - 1) {
+                    sendLocation(convertAlias(steps[stepperCounter + 1]));
+                  } else {
+                    setIsLastPage(true);
+                  }
+                }}
+              >
+                Go to{" "}
+                {stepperCounter >= steps.length - 1
+                  ? "finish"
+                  : steps[stepperCounter + 1]}
+              </button>
             )}
           </div>
         </div>
