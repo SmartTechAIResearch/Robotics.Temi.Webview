@@ -355,8 +355,11 @@ function App() {
   // });
 
   const sendLocation = (location: string) => {
-    if (steps.includes(location) || steps.includes(convertName(location))) {
+    if (steps.includes(location)) {
       setStepperCounter(steps.indexOf(location));
+    }
+    else if (steps.includes(convertName(location))){
+      setStepperCounter(steps.indexOf(convertName(location)));
     }
     socket.emit("message", location);
   };
@@ -395,7 +398,7 @@ function App() {
               ></SvgIcon>
             }
             <ListItemText
-              primary={item.alias.charAt(0).toUpperCase() + item.name.slice(1)}
+              primary={item.alias.charAt(0).toUpperCase() + item.alias.slice(1)}
             />
           </ListItemButton>
           <Divider />
@@ -483,6 +486,7 @@ function App() {
               id="GoToNextLocation"
               onClick={() => {
                 setStepperCounter(stepperCounter + 1);
+                console.log("steppercounter")
                 console.log(stepperCounter);
                 console.log(steps.length);
                 if (stepperCounter < steps.length - 1) {
