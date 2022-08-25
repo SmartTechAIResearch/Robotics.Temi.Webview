@@ -355,7 +355,7 @@ function App() {
   // });
 
   const sendLocation = (location: string) => {
-    if (steps.includes(location)) {
+    if (steps.includes(location) || steps.includes(convertName(location))) {
       setStepperCounter(steps.indexOf(location));
     }
     socket.emit("message", location);
@@ -403,8 +403,21 @@ function App() {
       ))}
     </Box>
   );
+  const convertAlias = (alias: any) =>{
 
-  const steps = ["reception", "project", "core", "inter"];
+    for (let location of locationData){
+      if (location.alias === alias)
+        return(location.name)
+    }
+  }; 
+  const convertName = (name: any) =>{
+
+    for (let location of locationData){
+      if (location.name === name)
+        return(location.alias)
+    }
+  };
+  const steps = ["reception", "Project-One", "core", "international"];
   return (
     <>
       <div className="">
@@ -473,7 +486,7 @@ function App() {
                 console.log(stepperCounter);
                 console.log(steps.length);
                 if (stepperCounter < steps.length - 1) {
-                  sendLocation(steps[stepperCounter + 1]);
+                  sendLocation(convertAlias(steps[stepperCounter + 1]));
                 } else {
                   setIsLastPage(true);
                 }
