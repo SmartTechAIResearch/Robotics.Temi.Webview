@@ -15,6 +15,7 @@
   position: fixed;
   bottom: 0;
 }
+
 #refreshPage {
   background-color: transparent;
   color: black;
@@ -26,6 +27,7 @@
   top: 0px;
   right: 0px;
 }
+
 /* .topright-refresh{
   padding: 0;
   background-color: transparent;
@@ -41,6 +43,7 @@
   /* position: relative; */
   margin-left: 1rem;
 }
+
 #HamburgerMenuButton {
   padding: 0px;
   margin-right: 2rem;
@@ -50,6 +53,7 @@
   padding-top: 1rem;
   margin: auto 0;
 }
+
 #GoToNextLocation {
   border-radius: 50%;
   text-align: center;
@@ -63,9 +67,17 @@
   color: white;
 }
 
+#qr {
+  height: 15rem;
+  width: 15rem;
+  display: block;
+  margin: 0 auto;
+}
+
 .ttsText {
   word-wrap: break-word;
 }
+
 #ttsDiv {
   font-size: 3rem;
   width: 65%;
@@ -78,6 +90,7 @@
   margin-bottom: 1rem;
   text-align: center;
 }
+
 #cancelButton {
   padding: 0;
   margin: 0rem;
@@ -85,6 +98,7 @@
   margin-right: auto;
   display: block;
 }
+
 #currentLocation {
   text-align: center;
   margin: 2rem auto;
@@ -99,14 +113,14 @@
   margin: 0rem 30%;
   width: 20%;
 }
+
 .rating label {
   font-size: x-large;
   font-weight: 500;
   display: block;
   margin: 0.1rem auto 1rem 1rem;
 }
-#title {
-}
+
 #ratingList {
   margin-top: 4rem;
   width: 50%;
@@ -121,10 +135,12 @@
   margin: 0%;
   margin-right: 10px;
 }
+
 .hidden {
   display: none;
   visibility: hidden;
 }
+
 .css-qivjh0-MuiStepLabel-label.MuiStepLabel-alternativeLabel {
   font-size: x-large;
 }
