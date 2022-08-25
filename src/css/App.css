@@ -142,10 +142,15 @@
 }
 
 .css-qivjh0-MuiStepLabel-label.MuiStepLabel-alternativeLabel {
-  font-size: x-large;
 }
 
 .css-qivjh0-MuiStepLabel-label.Mui-active {
-  font-size: xx-large;
-  font-weight: 700;
+  
+}
+span.MuiStepLabel-alternativeLabel{
+  font-size: x-large !important;
+}
+span.Mui-active{
+  font-size: xx-large !important;
+  font-weight: 700 !important;
 }

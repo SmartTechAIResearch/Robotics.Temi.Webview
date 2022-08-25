@@ -294,8 +294,11 @@ function App() {
       display: "flex",
       height: 22,
       alignItems: "center",
+
       ...(ownerState.active && {
         color: "#44c8f5",
+        fontSize: "xx-large",
+        fontWeight: 700,
       }),
       "& .QontoStepIcon-completedIcon": {
         color: "#44c8f5",
