@@ -63,7 +63,10 @@
   color: white;
 }
 
-#ttsText {
+.ttsText {
+  word-wrap: break-word;
+}
+#ttsDiv {
   font-size: 3rem;
   width: 65%;
   height: 250px;
@@ -73,6 +76,7 @@
   right: 0;
   margin-right: 1rem;
   margin-bottom: 1rem;
+  text-align: center;
 }
 #cancelButton {
   padding: 0;
@@ -92,7 +96,7 @@
 
 .rating {
   margin-left: 2rem;
-  margin:0rem 30%;
+  margin: 0rem 30%;
   width: 20%;
 }
 .rating label {
@@ -110,7 +114,6 @@
   margin: 0 auto;
 }
 
-
 .svgClass {
   width: 20px;
   height: 20px;
@@ -122,11 +125,11 @@
   display: none;
   visibility: hidden;
 }
-.css-qivjh0-MuiStepLabel-label.MuiStepLabel-alternativeLabel{
+.css-qivjh0-MuiStepLabel-label.MuiStepLabel-alternativeLabel {
   font-size: x-large;
 }
 
-.css-qivjh0-MuiStepLabel-label.Mui-active{
+.css-qivjh0-MuiStepLabel-label.Mui-active {
   font-size: xx-large;
   font-weight: 700;
 }
