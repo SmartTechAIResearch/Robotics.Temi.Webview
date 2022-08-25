@@ -116,12 +116,12 @@ function App() {
       },
       [`&.${stepConnectorClasses.active}`]: {
         [`& .${stepConnectorClasses.line}`]: {
-          borderColor: "#784af4",
+          borderColor: "#44c8f5",
         },
       },
       [`&.${stepConnectorClasses.completed}`]: {
         [`& .${stepConnectorClasses.line}`]: {
-          borderColor: "#784af4",
+          borderColor: "#44c8f5",
         },
       },
       [`& .${stepConnectorClasses.line}`]: {
@@ -295,17 +295,17 @@ function App() {
   const QontoStepIconRoot = styled("div")<{ ownerState: { active?: boolean } }>(
     ({ theme, ownerState }) => ({
       color:
-        theme.palette.mode === "dark" ? theme.palette.grey[700] : "#eaeaf0",
+        theme.palette.mode === "dark" ? theme.palette.grey[700] : "#44c8f5",
       display: "flex",
       height: 22,
       alignItems: "center",
       ...(ownerState.active && {
-        color: "#784af4",
+        color: "#44c8f5",
       }),
       "& .QontoStepIcon-completedIcon": {
-        color: "#784af4",
+        color: "#44c8f5",
         zIndex: 1,
-        fontSize: 25,
+        fontSize: 32,
       },
       "& .QontoStepIcon-circle": {
         width: 16,
@@ -467,7 +467,7 @@ function App() {
               <CancelIcon sx={{ fontSize: 100, color: red[500] }}></CancelIcon>
             </button>
             <button
-              className={nextButtonState}
+              className={nextButtonState} 
               id="GoToNextLocation"
               onClick={() => {
                 setStepperCounter(stepperCounter + 1);
