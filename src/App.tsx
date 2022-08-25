@@ -406,7 +406,7 @@ function App() {
     </Box>
   );
   const showRating= () => {
-    setRatingState("");
+    // setRatingState("");
     setNextButtonState("hidden");
     console.log(nextButtonState);
     console.log(ratingState);
