@@ -10,8 +10,8 @@
 .lowerleft {
   margin-bottom: 1px;
   margin-left: 1px;
-  width: 400px;
-  height: 400px;
+  width: 300px;
+  height: 300px;
   position: fixed;
   bottom: 0;
 }
@@ -26,6 +26,11 @@
   margin-top: 1rem;
   top: 0px;
   right: 0px;
+}
+
+.multipleOptions {
+  display: flex;
+  margin-top: 4rem;
 }
 
 /* .topright-refresh{
@@ -141,10 +146,10 @@
   visibility: hidden;
 }
 
-span.MuiStepLabel-alternativeLabel{
+span.MuiStepLabel-alternativeLabel {
   font-size: x-large !important;
 }
-span.Mui-active{
+span.Mui-active {
   font-size: xx-large !important;
   font-weight: 700 !important;
 }
