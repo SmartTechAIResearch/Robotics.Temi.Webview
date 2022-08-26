@@ -46,6 +46,13 @@ function App() {
   const [currentSentence, setCurrentSentence] = useState<string>("");
   const [isLastPage, setIsLastPage] = useState<boolean>(false);
   const [isAtCore, setIsAtCore] = useState<boolean>(false);
+  const [coreLocations, setCoreLocation] = useState<Array<string>>([
+    "ai",
+    "iotinf",
+    "smartxr",
+    "nextweb",
+  ]);
+  const [showInternational, setShowInternational] = useState<boolean>(false);
 
   useEffect(() => {
     // const textAtLocation = (location: any) => {
@@ -187,7 +194,13 @@ function App() {
 
   useEffect(() => {
     if (currentLocation !== undefined) {
-      if (currentLocation.name === "core") {
+      if (
+        currentLocation.name === "core" ||
+        "ai" ||
+        "iotinf" ||
+        "smartxr" ||
+        "nextweb"
+      ) {
         setIsAtCore(true);
       } else {
         setIsAtCore(false);
@@ -416,8 +429,6 @@ function App() {
   };
   const steps = ["reception", "Project-One", "core", "international"];
 
-  const courses = ["ai", "iotinf", "smartxr", "nextweb"];
-
   return (
     <>
       <div className="">
@@ -477,18 +488,59 @@ function App() {
           ) : (
             <>
               {isAtCore ? (
-                <div className="multipleOptions">
-                  {courses.map((label) => (
-                    <button
-                      id="GoToNextLocation"
-                      onClick={() => {
-                        sendLocation(label);
-                      }}
-                    >
-                      Go to {" " + convertName(label)}
-                    </button>
-                  ))}
-                </div>
+                <>
+                  {showInternational ? (
+                    <>
+                      <button className="hidden" id="cancelButton">
+                        <CancelIcon
+                          sx={{ fontSize: 100, color: red[500] }}
+                        ></CancelIcon>
+                      </button>
+                      <button
+                        id="GoToNextLocation"
+                        onClick={() => {
+                          setStepperCounter(stepperCounter + 1);
+                          if (stepperCounter < steps.length - 1) {
+                            sendLocation(
+                              convertAlias(steps[stepperCounter + 1])
+                            );
+                          } else {
+                            setIsLastPage(true);
+                          }
+                        }}
+                      >
+                        Go to{" "}
+                        {stepperCounter >= steps.length - 1
+                          ? "finish"
+                          : steps[stepperCounter + 1]}
+                      </button>
+                    </>
+                  ) : (
+                    <div className="multipleOptions">
+                      {coreLocations.map((label) => (
+                        <button
+                          id="GoToNextLocation"
+                          onClick={() => {
+                            console.log(coreLocations);
+                            if (coreLocations.length === 1) {
+                              sendLocation(label);
+                              setShowInternational(true);
+                            } else {
+                              setCoreLocation(
+                                coreLocations.filter((e) => e !== label)
+                              );
+                              setStepperCounter(stepperCounter);
+
+                              sendLocation(label);
+                            }
+                          }}
+                        >
+                          Go to {" " + convertName(label)}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </>
               ) : (
                 <div id="title">
                   <button className="hidden" id="cancelButton">
