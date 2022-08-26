@@ -36,7 +36,6 @@ function App() {
   const [stepperCounter, setStepperCounter] = useState(0);
   // const [nextButtonState, setNextButtonState] = useState("");
   // const [qrCodeState, setQrCodeState] = useState("hidden");
-
   const [soundCounter, setSoundCounter] = useState(0);
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [open, setOpen] = useState(false);
@@ -47,6 +46,14 @@ function App() {
   const [currentSentence, setCurrentSentence] = useState<string>("");
   const [isLastPage, setIsLastPage] = useState<boolean>(false);
   const [checked, setChecked] = useState(true);
+  const [isAtCore, setIsAtCore] = useState<boolean>(false);
+  const [coreLocations, setCoreLocation] = useState<Array<string>>([
+    "ai",
+    "iotinf",
+    "smartxr",
+    "nextweb",
+  ]);
+  const [showInternational, setShowInternational] = useState<boolean>(false);
 
   useEffect(() => {
     // const textAtLocation = (location: any) => {
@@ -82,7 +89,6 @@ function App() {
         }
       })
       .then((data) => {
-        console.log(data);
         setLocationData(data);
       });
 
@@ -118,10 +124,7 @@ function App() {
       // }
     });
     socket.on("temiMovementMessage", (data) => {
-      console.log(data);
-      console.log(data.movementMessage);
       if (data.movementMessage["status"] === "complete") {
-        console.log("yee");
         // textAtLocation(data.movementMessage["location"]);
         setTemiMovementData(data.movementMessage["location"]);
       }
@@ -132,14 +135,10 @@ function App() {
 
   useEffect(() => {
     const textAtLocation = () => {
-      console.log(temiMovementData);
-      console.log(locationData);
       locationData.forEach((data) => {
         if (temiMovementData === data.name) {
           setCurrentLocation(data);
-          console.log(data);
           var TextToSay = data.textList;
-          console.log(TextToSay);
           socket.emit("tts", TextToSay[0]);
           setCurrentSentence(TextToSay[0]);
 
@@ -154,26 +153,14 @@ function App() {
   }, [locationData, temiMovementData]);
 
   useEffect(() => {
-    console.log("I am here!!");
     const readNextTemiLine = () => {
       if (currentLocation !== undefined) {
-        console.log(temiTtsData);
-        console.log(
-          currentLocation.textList.indexOf(temiTtsData.temiTtsMessage.text)
-        );
         if (
           currentLocation.textList[
             currentLocation.textList.indexOf(temiTtsData.temiTtsMessage.text) +
               1
           ] !== undefined
         ) {
-          console.log(
-            currentLocation!.textList[
-              currentLocation!.textList.indexOf(
-                temiTtsData.temiTtsMessage.text
-              ) + 1
-            ]
-          );
           socket.emit(
             "tts",
             currentLocation!.textList[
@@ -200,12 +187,36 @@ function App() {
   }, [temiTtsData]);
 
   useEffect(() => {
-    console.log(soundCounter + " soundcounter");
     if (soundCounter === 15) {
       audio.play();
       setSoundCounter(0);
     }
   }, [soundCounter, audio]);
+
+  useEffect(() => {
+    if (currentLocation !== undefined) {
+      if (
+        currentLocation.name === "core" ||
+        "ai" ||
+        "iotinf" ||
+        "smartxr" ||
+        "nextweb"
+      ) {
+        setIsAtCore(true);
+      } else {
+        setIsAtCore(false);
+      }
+    }
+  }, [currentLocation]);
+
+  useEffect(() => {
+    if (isLastPage) {
+      setTimeout(() => {
+        console.log("here");
+        socket.emit("reboot", "yes");
+      }, 10000);
+    }
+  }, [isLastPage, socket]);
   // const tessIcon = CancelIcon;
   //rating//
 
@@ -441,6 +452,7 @@ function App() {
   }));
   
   const steps = ["reception", "Project-One", "core", "international"];
+
   return (
     <>
       <div className="">
@@ -498,37 +510,95 @@ function App() {
           </Stack>
         </div>
         <div className="test">
-          <div id="title">
-            {/* <div id="currentLocation">
+          {/* <div id="currentLocation">
               <h1>Project-One</h1>
             </div> */}
-            <button className="hidden" id="cancelButton">
-              <CancelIcon sx={{ fontSize: 100, color: red[500] }}></CancelIcon>
-            </button>
-            {isLastPage ? (
-              <img src="/qr.jpg" id="qr" alt="mctLgo"></img>
-            ) : (
-              <button
-                id="GoToNextLocation"
-                onClick={() => {
-                  setStepperCounter(stepperCounter + 1);
-                  console.log("steppercounter");
-                  console.log(stepperCounter);
-                  console.log(steps.length);
-                  if (stepperCounter < steps.length - 1) {
-                    sendLocation(convertAlias(steps[stepperCounter + 1]));
-                  } else {
-                    setIsLastPage(true);
-                  }
-                }}
-              >
-                Go to{" "}
-                {stepperCounter >= steps.length - 1
-                  ? "finish"
-                  : steps[stepperCounter + 1]}
-              </button>
-            )}
-          </div>
+
+          {isLastPage ? (
+            <img src="/qr.jpg" id="qr" alt="mctLgo"></img>
+          ) : (
+            <>
+              {isAtCore ? (
+                <>
+                  {showInternational ? (
+                    <>
+                      <button className="hidden" id="cancelButton">
+                        <CancelIcon
+                          sx={{ fontSize: 100, color: red[500] }}
+                        ></CancelIcon>
+                      </button>
+                      <button
+                        id="GoToNextLocation"
+                        onClick={() => {
+                          setStepperCounter(stepperCounter + 1);
+                          if (stepperCounter < steps.length - 1) {
+                            sendLocation(
+                              convertAlias(steps[stepperCounter + 1])
+                            );
+                          } else {
+                            setIsLastPage(true);
+                          }
+                        }}
+                      >
+                        Go to{" "}
+                        {stepperCounter >= steps.length - 1
+                          ? "finish"
+                          : steps[stepperCounter + 1]}
+                      </button>
+                    </>
+                  ) : (
+                    <div className="multipleOptions">
+                      {coreLocations.map((label) => (
+                        <button
+                          id="GoToNextLocation"
+                          onClick={() => {
+                            console.log(coreLocations);
+                            if (coreLocations.length === 1) {
+                              sendLocation(label);
+                              setShowInternational(true);
+                            } else {
+                              setCoreLocation(
+                                coreLocations.filter((e) => e !== label)
+                              );
+                              setStepperCounter(stepperCounter);
+
+                              sendLocation(label);
+                            }
+                          }}
+                        >
+                          Go to {" " + convertName(label)}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div id="title">
+                  <button className="hidden" id="cancelButton">
+                    <CancelIcon
+                      sx={{ fontSize: 100, color: red[500] }}
+                    ></CancelIcon>
+                  </button>
+                  <button
+                    id="GoToNextLocation"
+                    onClick={() => {
+                      setStepperCounter(stepperCounter + 1);
+                      if (stepperCounter < steps.length - 1) {
+                        sendLocation(convertAlias(steps[stepperCounter + 1]));
+                      } else {
+                        setIsLastPage(true);
+                      }
+                    }}
+                  >
+                    Go to{" "}
+                    {stepperCounter >= steps.length - 1
+                      ? "finish"
+                      : steps[stepperCounter + 1]}
+                  </button>
+                </div>
+              )}
+            </>
+          )}
         </div>
         <div id="ttsDiv">
           <p className="">{currentSentence}</p>
