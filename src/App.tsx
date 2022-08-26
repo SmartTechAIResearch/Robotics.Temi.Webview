@@ -46,6 +46,7 @@ function App() {
   const [temiMovementData, setTemiMovementData] = useState<any>();
   const [currentSentence, setCurrentSentence] = useState<string>("");
   const [isLastPage, setIsLastPage] = useState<boolean>(false);
+  const [isAtCore, setIsAtCore] = useState<boolean>(false);
 
   useEffect(() => {
     // const textAtLocation = (location: any) => {
@@ -205,6 +206,14 @@ function App() {
       setSoundCounter(0);
     }
   }, [soundCounter, audio]);
+
+  useEffect(() => {
+    if (currentLocation.name === "core") {
+      setIsAtCore(true);
+    } else {
+      setIsAtCore(false);
+    }
+  }, [currentLocation]);
   // const tessIcon = CancelIcon;
   //rating//
 
@@ -477,25 +486,31 @@ function App() {
             {isLastPage ? (
               <img src="/qr.jpg" id="qr" alt="mctLgo"></img>
             ) : (
-              <button
-                id="GoToNextLocation"
-                onClick={() => {
-                  setStepperCounter(stepperCounter + 1);
-                  console.log("steppercounter");
-                  console.log(stepperCounter);
-                  console.log(steps.length);
-                  if (stepperCounter < steps.length - 1) {
-                    sendLocation(convertAlias(steps[stepperCounter + 1]));
-                  } else {
-                    setIsLastPage(true);
-                  }
-                }}
-              >
-                Go to{" "}
-                {stepperCounter >= steps.length - 1
-                  ? "finish"
-                  : steps[stepperCounter + 1]}
-              </button>
+              <>
+                {isAtCore ? (
+                  <div>asdfasdf</div>
+                ) : (
+                  <button
+                    id="GoToNextLocation"
+                    onClick={() => {
+                      setStepperCounter(stepperCounter + 1);
+                      console.log("steppercounter");
+                      console.log(stepperCounter);
+                      console.log(steps.length);
+                      if (stepperCounter < steps.length - 1) {
+                        sendLocation(convertAlias(steps[stepperCounter + 1]));
+                      } else {
+                        setIsLastPage(true);
+                      }
+                    }}
+                  >
+                    Go to{" "}
+                    {stepperCounter >= steps.length - 1
+                      ? "finish"
+                      : steps[stepperCounter + 1]}
+                  </button>
+                )}
+              </>
             )}
           </div>
         </div>
