@@ -3,9 +3,9 @@ import "./css/App.css";
 import { iLocationData } from "../interfaces/interfaces";
 import { io } from "socket.io-client";
 import { Menu, Wifi, WifiOff } from "@mui/icons-material";
-import { red } from "@mui/material/colors";
+import { blue, lightBlue, red } from "@mui/material/colors";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { Step, StepLabel, Stepper, styled, SvgIcon } from "@mui/material";
+import { FormControlLabel, Step, StepLabel, Stepper, SvgIcon, Switch } from "@mui/material";
 import StepConnector, {
   stepConnectorClasses,
 } from "@mui/material/StepConnector";
@@ -19,7 +19,7 @@ import ForumIcon from "@mui/icons-material/Forum";
 import WcIcon from "@mui/icons-material/Wc";
 import ElevatorIcon from "@mui/icons-material/Elevator";
 import PowerIcon from "@mui/icons-material/Power";
-
+import { alpha, styled } from '@mui/material/styles';
 import {
   Box,
   Button,
@@ -46,6 +46,7 @@ function App() {
   const [temiMovementData, setTemiMovementData] = useState<any>();
   const [currentSentence, setCurrentSentence] = useState<string>("");
   const [isLastPage, setIsLastPage] = useState<boolean>(false);
+  const [checked, setChecked] = useState(true);
 
   useEffect(() => {
     // const textAtLocation = (location: any) => {
@@ -416,6 +417,29 @@ function App() {
       if (location.name === name) return location.alias;
     }
   };
+  const switchChange = (e) => {
+    console.log("switch")
+    // console.log(e.target.checked);
+    setChecked(e.target.checked);
+    //emit mute
+    if (checked === false){
+      socket.emit("mute", "true")
+    }else{
+      socket.emit("mute", "false")
+    }
+  };
+  const GreenSwitch = styled(Switch)(({ theme }) => ({
+    '& .MuiSwitch-switchBase.Mui-checked': {
+      color: blue[300],
+      '&:hover': {
+        backgroundColor: alpha(lightBlue[300], theme.palette.action.hoverOpacity),
+      },
+    },
+    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+      backgroundColor: blue[300],
+    },
+  }));
+  
   const steps = ["reception", "Project-One", "core", "international"];
   return (
     <>
@@ -430,7 +454,14 @@ function App() {
             <Menu className="topleft" sx={{ fontSize: 40, color: "black" }} />
           </Button>
 
-          <div>
+          <div> 
+            <FormControlLabel
+            id="switchLabel"
+            value="end"
+            control={<GreenSwitch  checked={checked} onChange={switchChange} defaultChecked/>}
+            label="Toggle TTS"
+            labelPlacement="top"
+          />            
             <button id="refreshPage" onClick={() => window.location.reload()}>
               <RefreshIcon sx={{ fontSize: 40 }}></RefreshIcon>
             </button>
