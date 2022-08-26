@@ -5,7 +5,14 @@ import { io } from "socket.io-client";
 import { Menu, Wifi, WifiOff } from "@mui/icons-material";
 import { blue, lightBlue, red } from "@mui/material/colors";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { FormControlLabel, Step, StepLabel, Stepper, SvgIcon, Switch } from "@mui/material";
+import {
+  FormControlLabel,
+  Step,
+  StepLabel,
+  Stepper,
+  SvgIcon,
+  Switch,
+} from "@mui/material";
 import StepConnector, {
   stepConnectorClasses,
 } from "@mui/material/StepConnector";
@@ -19,7 +26,7 @@ import ForumIcon from "@mui/icons-material/Forum";
 import WcIcon from "@mui/icons-material/Wc";
 import ElevatorIcon from "@mui/icons-material/Elevator";
 import PowerIcon from "@mui/icons-material/Power";
-import { alpha, styled } from '@mui/material/styles';
+import { alpha, styled } from "@mui/material/styles";
 import {
   Box,
   Button,
@@ -197,10 +204,10 @@ function App() {
     if (currentLocation !== undefined) {
       if (
         currentLocation.name === "core" ||
-        "ai" ||
-        "iotinf" ||
-        "smartxr" ||
-        "nextweb"
+        currentLocation.name === "ai" ||
+        currentLocation.name === "iotinf" ||
+        currentLocation.name === "smartxr" ||
+        currentLocation.name === "nextweb"
       ) {
         setIsAtCore(true);
       } else {
@@ -429,28 +436,31 @@ function App() {
     }
   };
   const switchChange = (e) => {
-    console.log("switch")
+    console.log("switch");
     // console.log(e.target.checked);
     setChecked(e.target.checked);
     //emit mute
-    if (checked === false){
-      socket.emit("mute", "false")
-    }else{
-      socket.emit("mute", "true")
+    if (checked === false) {
+      socket.emit("mute", "false");
+    } else {
+      socket.emit("mute", "true");
     }
   };
   const GreenSwitch = styled(Switch)(({ theme }) => ({
-    '& .MuiSwitch-switchBase.Mui-checked': {
+    "& .MuiSwitch-switchBase.Mui-checked": {
       color: blue[300],
-      '&:hover': {
-        backgroundColor: alpha(lightBlue[300], theme.palette.action.hoverOpacity),
+      "&:hover": {
+        backgroundColor: alpha(
+          lightBlue[300],
+          theme.palette.action.hoverOpacity
+        ),
       },
     },
-    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+    "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
       backgroundColor: blue[300],
     },
   }));
-  
+
   const steps = ["reception", "Project-One", "core", "international"];
 
   return (
@@ -466,14 +476,20 @@ function App() {
             <Menu className="topleft" sx={{ fontSize: 40, color: "black" }} />
           </Button>
 
-          <div> 
+          <div>
             <FormControlLabel
-            id="switchLabel"
-            value="end"
-            control={<GreenSwitch  checked={checked} onChange={switchChange} defaultChecked/>}
-            label="Toggle TTS"
-            labelPlacement="top"
-          />            
+              id="switchLabel"
+              value="end"
+              control={
+                <GreenSwitch
+                  checked={checked}
+                  onChange={switchChange}
+                  defaultChecked
+                />
+              }
+              label="Toggle TTS"
+              labelPlacement="top"
+            />
             <button id="refreshPage" onClick={() => window.location.reload()}>
               <RefreshIcon sx={{ fontSize: 40 }}></RefreshIcon>
             </button>
