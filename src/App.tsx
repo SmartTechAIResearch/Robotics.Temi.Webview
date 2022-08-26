@@ -423,9 +423,9 @@ function App() {
     setChecked(e.target.checked);
     //emit mute
     if (checked === false){
-      socket.emit("mute", "true")
-    }else{
       socket.emit("mute", "false")
+    }else{
+      socket.emit("mute", "true")
     }
   };
   const GreenSwitch = styled(Switch)(({ theme }) => ({
