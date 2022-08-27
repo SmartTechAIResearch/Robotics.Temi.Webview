@@ -221,7 +221,7 @@ function App() {
       setTimeout(() => {
         console.log("here");
         socket.emit("reboot", "yes");
-      }, 10000);
+      }, 60000);
     }
   }, [isLastPage, socket]);
   // const tessIcon = CancelIcon;
