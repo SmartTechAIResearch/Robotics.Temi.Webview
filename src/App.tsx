@@ -141,6 +141,12 @@ function App() {
   }, []);
 
   useEffect(() => {
+    if (isLastPage) {
+      socket.emit("message", "finish");
+    }
+  }, [isLastPage, socket]);
+
+  useEffect(() => {
     const textAtLocation = () => {
       locationData.forEach((data) => {
         if (temiMovementData === data.name) {
@@ -553,7 +559,6 @@ function App() {
                               convertAlias(steps[stepperCounter + 1])
                             );
                           } else {
-                            sendLocation("finish");
                             setIsLastPage(true);
                           }
                         }}
