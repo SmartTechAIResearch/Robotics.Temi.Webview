@@ -553,6 +553,7 @@ function App() {
                               convertAlias(steps[stepperCounter + 1])
                             );
                           } else {
+                            sendLocation("finish");
                             setIsLastPage(true);
                           }
                         }}
