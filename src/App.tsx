@@ -526,13 +526,11 @@ function App() {
           </Stack>
         </div>
         <div className="test">
-          {/* <div id="currentLocation">
-              <h1>Project-One</h1>
-            </div> */}
-
           {isLastPage ? (
             <>
-              <p>FeedBack</p>
+              <div id="currentLocation">
+                <h1>Feedback</h1>
+              </div>
               <img src="/qr.jpg" id="qr" alt="mctLgo"></img>
             </>
           ) : (
