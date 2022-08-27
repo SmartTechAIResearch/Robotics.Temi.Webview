@@ -461,7 +461,7 @@ function App() {
     },
   }));
 
-  const steps = ["reception", "Project-One", "core", "international"];
+  const steps = ["Reception", "1MCT", "The Core", "International"];
 
   return (
     <>
@@ -531,7 +531,10 @@ function App() {
             </div> */}
 
           {isLastPage ? (
-            <img src="/qr.jpg" id="qr" alt="mctLgo"></img>
+            <>
+              <p>FeedBack</p>
+              <img src="/qr.jpg" id="qr" alt="mctLgo"></img>
+            </>
           ) : (
             <>
               {isAtCore ? (
