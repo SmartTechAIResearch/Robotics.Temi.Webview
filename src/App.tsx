@@ -38,7 +38,6 @@ import {
 //const socket = io("http://172.30.248.58:8453");
 
 function App() {
-  const audio = useMemo(() => new Audio("/sound.opus"), []);
   const socket = io("https://mcttemisocket.azurewebsites.net");
   const [stepperCounter, setStepperCounter] = useState(0);
   // const [nextButtonState, setNextButtonState] = useState("");
@@ -375,13 +374,13 @@ function App() {
   // });
 
   const sendLocation = (location: string) => {
-    if (timer !== null){
-      clearTimeout(timer)
+    if (timer !== null) {
+      clearTimeout(timer);
     }
     let timeState = setTimeout(() => {
       socket.emit("reboot", "yes");
     }, 60000);
-    setTimer(timeState)
+    setTimer(timeState);
     if (steps.includes(location)) {
       setStepperCounter(steps.indexOf(location));
     } else if (steps.includes(convertName(location))) {
