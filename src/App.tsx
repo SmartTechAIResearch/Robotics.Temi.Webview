@@ -35,13 +35,11 @@ import {
   ListItemButton,
   ListItemText,
 } from "@mui/material";
-//const socket = io("http://172.30.248.58:8453");
 
 function App() {
+  const steps = ["Reception", "1MCT", "The Core", "International"];
   const socket = io("https://mcttemisocket.azurewebsites.net");
   const [stepperCounter, setStepperCounter] = useState(0);
-  // const [nextButtonState, setNextButtonState] = useState("");
-  // const [qrCodeState, setQrCodeState] = useState("hidden");
   const [ShutdownCounter, setShutdownCounter] = useState(0);
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [open, setOpen] = useState(false);
@@ -63,23 +61,6 @@ function App() {
   const [showInternational, setShowInternational] = useState<boolean>(false);
 
   useEffect(() => {
-    // const textAtLocation = (location: any) => {
-    //   console.log(location);
-    //   console.log(locationData);
-    //   locationData.forEach((data) => {
-    //     if (location === data.name) {
-    //       setCurrentLocation(data);
-    //       console.log(data);
-    //       var TextToSay = data.textList;
-    //       console.log(TextToSay);
-    //       socket.emit("tts", TextToSay[0]);
-
-    //       // TextToSay.forEach((text) => {
-    //       //   socket.emit("tts", text);
-    //       // });
-    //     }
-    //   });
-    // };
     let url =
       "https://temitourapi.azurewebsites.net/api/locations/getlocations";
     let options: RequestInit = {
@@ -108,31 +89,9 @@ function App() {
 
     socket.on("temiTtsMessage", (data) => {
       setTemiTtsData(data);
-      // if (currentLocation !== undefined) {
-      //   console.log(data);
-      //   console.log(currentLocation.textList.indexOf(data.temiTtsMessage.text));
-      //   if (
-      //     currentLocation.textList[
-      //       currentLocation.textList.indexOf(data.temiTtsMessage.text) + 1
-      //     ] !== undefined
-      //   ) {
-      //     console.log(
-      //       currentLocation!.textList[
-      //         currentLocation!.textList.indexOf(data.temiTtsMessage.text) + 1
-      //       ]
-      //     );
-      //     socket.emit(
-      //       "tts",
-      //       currentLocation!.textList[
-      //         currentLocation!.textList.indexOf(data.temiTtsMessage.text) + 1
-      //       ]
-      //     );
-      //   }
-      // }
     });
     socket.on("temiMovementMessage", (data) => {
       if (data.movementMessage["status"] === "complete") {
-        // textAtLocation(data.movementMessage["location"]);
         setTemiMovementData(data.movementMessage["location"]);
       }
     });
@@ -148,10 +107,6 @@ function App() {
           var TextToSay = data.textList;
           socket.emit("tts", TextToSay[0]);
           setCurrentSentence(TextToSay[0]);
-
-          // TextToSay.forEach((text) => {
-          //   socket.emit("tts", text);
-          // });
         }
       });
     };
@@ -195,7 +150,6 @@ function App() {
 
   useEffect(() => {
     if (ShutdownCounter === 15) {
-      // audio.play();
       socket.emit("shutdown");
     }
   }, [ShutdownCounter, socket]);
@@ -224,61 +178,6 @@ function App() {
       }, 60000);
     }
   }, [isLastPage, socket]);
-  // const tessIcon = CancelIcon;
-  //rating//
-
-  // const customIcons: {
-  //   [index: string]: {
-  //     icon: React.ReactElement;
-  //     label: string;
-  //   };
-  // } = {
-  //   1: {
-  //     icon: <SentimentVeryDissatisfiedIcon color="error" />,
-  //     label: "Very Dissatisfied",
-  //   },
-  //   2: {
-  //     icon: <SentimentDissatisfiedIcon color="error" />,
-  //     label: "Dissatisfied",
-  //   },
-  //   3: {
-  //     icon: <SentimentSatisfiedIcon color="warning" />,
-  //     label: "Neutral",
-  //   },
-  //   4: {
-  //     icon: <SentimentSatisfiedAltIcon color="success" />,
-  //     label: "Satisfied",
-  //   },
-  //   5: {
-  //     icon: <SentimentVerySatisfiedIcon color="success" />,
-  //     label: "Very Satisfied",
-  //   },
-  // };
-
-  //rating//
-  //stepper//
-  // const StepIcon = styled('div')<{ ownerState: { active?: boolean } }>(
-  //   ({ theme, ownerState }) => ({
-  //     color: theme.palette.mode === 'dark' ? theme.palette.grey[700] : '#eaeaf0',
-  //     display: 'flex',
-  //     height: 22,
-  //     alignItems: 'center',
-  //     ...(ownerState.active && {
-  //       color: '#784af4',
-  //     }),
-  //     '& .QontoStepIcon-completedIcon': {
-  //       color: '#784af4',
-  //       zIndex: 1,
-  //       fontSize: 18,
-  //     },
-  //     '& .QontoStepIcon-circle': {
-  //       width: 8,
-  //       height: 8,
-  //       borderRadius: '50%',
-  //       backgroundColor: 'currentColor',
-  //     },
-  //   }),
-  // );
 
   const StepperConnector = styled(StepConnector)(({ theme }) => {
     return {
@@ -346,32 +245,6 @@ function App() {
       </QontoStepIconRoot>
     );
   }
-
-  // const QontoConnector = styled(StepConnector)(({ theme }) => {
-  //   return {
-  //     [`&.${stepConnectorClasses.alternativeLabel}`]: {
-  //       top: 10,
-  //       left: "calc(-50% + 16px)",
-  //       right: "calc(50% + 16px)",
-  //     },
-  //     [`&.${stepConnectorClasses.active}`]: {
-  //       [`& .${stepConnectorClasses.line}`]: {
-  //         borderColor: "#784af4",
-  //       },
-  //     },
-  //     [`&.${stepConnectorClasses.completed}`]: {
-  //       [`& .${stepConnectorClasses.line}`]: {
-  //         borderColor: "#784af4",
-  //       },
-  //     },
-  //     [`& .${stepConnectorClasses.line}`]: {
-  //       borderColor:
-  //         theme.palette.mode === "dark" ? theme.palette.grey[800] : "#eaeaf0",
-  //       borderTopWidth: 3,
-  //       borderRadius: 1,
-  //     },
-  //   };
-  // });
 
   const sendLocation = (location: string) => {
     if (timer !== null) {
@@ -467,8 +340,6 @@ function App() {
       backgroundColor: blue[300],
     },
   }));
-
-  const steps = ["Reception", "1MCT", "The Core", "International"];
 
   return (
     <>
