@@ -43,7 +43,7 @@ function App() {
   const [stepperCounter, setStepperCounter] = useState(0);
   // const [nextButtonState, setNextButtonState] = useState("");
   // const [qrCodeState, setQrCodeState] = useState("hidden");
-  const [soundCounter, setSoundCounter] = useState(0);
+  const [ShutdownCounter, setShutdownCounter] = useState(0);
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [open, setOpen] = useState(false);
   const [locationData, setLocationData] = useState<Array<iLocationData>>([]);
@@ -194,11 +194,11 @@ function App() {
   }, [temiTtsData]);
 
   useEffect(() => {
-    if (soundCounter === 15) {
-      audio.play();
-      setSoundCounter(0);
+    if (ShutdownCounter === 15) {
+      // audio.play();
+      socket.emit("shutdown");
     }
-  }, [soundCounter, audio]);
+  }, [ShutdownCounter, socket]);
 
   useEffect(() => {
     if (currentLocation !== undefined) {
@@ -497,7 +497,7 @@ function App() {
               <Wifi
                 className="topright"
                 sx={{ fontSize: 40 }}
-                onClick={() => setSoundCounter(soundCounter + 1)}
+                onClick={() => setShutdownCounter(ShutdownCounter + 1)}
               />
             ) : (
               <WifiOff
