@@ -60,6 +60,7 @@ function App() {
     "smartxr",
     "nextweb",
   ]);
+  const [timer, setTimer] = useState<any>();
   const [showInternational, setShowInternational] = useState<boolean>(false);
 
   useEffect(() => {
@@ -374,6 +375,13 @@ function App() {
   // });
 
   const sendLocation = (location: string) => {
+    if (timer !== null){
+      clearTimeout(timer)
+    }
+    let timeState = setTimeout(() => {
+      socket.emit("reboot", "yes");
+    }, 60000);
+    setTimer(timeState)
     if (steps.includes(location)) {
       setStepperCounter(steps.indexOf(location));
     } else if (steps.includes(convertName(location))) {
