@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import "./css/App.css";
 import { iLocationData } from "../interfaces/interfaces";
 import { io } from "socket.io-client";
