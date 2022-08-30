@@ -61,6 +61,7 @@ function App() {
   const [showInternational, setShowInternational] = useState<boolean>(false);
 
   useEffect(() => {
+    //API call to get location information
     let url =
       "https://temitourapi.azurewebsites.net/api/locations/getlocations";
     let options: RequestInit = {
@@ -79,27 +80,29 @@ function App() {
       .then((data) => {
         setLocationData(data);
       });
-
+    //connction with socket true
     socket.on("connect", () => {
       setIsConnected(true);
     });
+    //connection with socket false
     socket.on("disconnect", () => {
       setIsConnected(false);
     });
-
+    //listen to temi response socket for TTS
     socket.on("temiTtsMessage", (data) => {
       setTemiTtsData(data);
     });
+    //listen to temi response socket for movement
     socket.on("temiMovementMessage", (data) => {
       if (data.movementMessage["status"] === "complete") {
         setTemiMovementData(data.movementMessage["location"]);
       }
     });
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
+    //search correct text and emit to temi TTS
     const textAtLocation = () => {
       locationData.forEach((data) => {
         if (temiMovementData === data.name) {
@@ -115,6 +118,7 @@ function App() {
   }, [locationData, temiMovementData]);
 
   useEffect(() => {
+    //search next line of text & emit to temi
     const readNextTemiLine = () => {
       if (currentLocation !== undefined) {
         if (
@@ -149,12 +153,15 @@ function App() {
   }, [temiTtsData]);
 
   useEffect(() => {
+    //shutdown 
     if (ShutdownCounter === 15) {
       socket.emit("shutdown");
     }
   }, [ShutdownCounter, socket]);
 
   useEffect(() => {
+    // check if location is core ai iotinf smartxr nextweb
+    // to be able to go to each location and visit all choice modules
     if (currentLocation !== undefined) {
       if (
         currentLocation.name === "core" ||
@@ -171,6 +178,7 @@ function App() {
   }, [currentLocation]);
 
   useEffect(() => {
+    //reboot after 1 min of showing QR code in the end 
     if (isLastPage) {
       setTimeout(() => {
         console.log("here");
@@ -179,7 +187,9 @@ function App() {
     }
   }, [isLastPage, socket]);
 
+  //styling for stepper
   const StepperConnector = styled(StepConnector)(({ theme }) => {
+    
     return {
       [`&.${stepConnectorClasses.alternativeLabel}`]: {
         top: 10,
@@ -205,6 +215,7 @@ function App() {
     };
   });
 
+  //stepper styling
   const QontoStepIconRoot = styled("div")<{ ownerState: { active?: boolean } }>(
     ({ theme, ownerState }) => ({
       color:
@@ -232,6 +243,7 @@ function App() {
     })
   );
 
+  //stepper icons
   function QontoStepIcon(props: StepIconProps) {
     const { active, completed, className } = props;
 
@@ -246,6 +258,7 @@ function App() {
     );
   }
 
+  //send temi to specific location
   const sendLocation = (location: string) => {
     if (timer !== null) {
       clearTimeout(timer);
@@ -261,6 +274,7 @@ function App() {
     }
     socket.emit("message", location);
   };
+  //fill drawer with locations from API
   const getList = () => (
     <Box
       role="presentation"
@@ -305,16 +319,20 @@ function App() {
       ))}
     </Box>
   );
+
+  //convert alias to location name
   const convertAlias = (alias: any) => {
     for (let location of locationData) {
       if (location.alias === alias) return location.name;
     }
   };
+  //convert location name to alias
   const convertName = (name: any) => {
     for (let location of locationData) {
       if (location.name === name) return location.alias;
     }
   };
+  //switch tts to mute or unmute
   const switchChange = (e) => {
     console.log("switch");
     // console.log(e.target.checked);
@@ -326,6 +344,7 @@ function App() {
       socket.emit("mute", "true");
     }
   };
+  //styling for switch
   const GreenSwitch = styled(Switch)(({ theme }) => ({
     "& .MuiSwitch-switchBase.Mui-checked": {
       color: blue[300],
@@ -340,7 +359,7 @@ function App() {
       backgroundColor: blue[300],
     },
   }));
-
+  //app html 
   return (
     <>
       <div className="">
