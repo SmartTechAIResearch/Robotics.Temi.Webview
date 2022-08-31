@@ -44,6 +44,7 @@ function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [open, setOpen] = useState(false);
   const [locationData, setLocationData] = useState<Array<iLocationData>>([]);
+  const [stepperData, setStepperData] = useState<Array<any>>([".", ";"]);
   const [currentLocation, setCurrentLocation] = useState<iLocationData>();
   const [temiTtsData, setTemiTtsData] = useState<any>();
   const [temiMovementData, setTemiMovementData] = useState<any>();
@@ -62,6 +63,26 @@ function App() {
 
   useEffect(() => {
     //API call to get location information
+    let stepperURL =
+      "https://temitourapi.azurewebsites.net/api/stepper";
+    let optionsURL: RequestInit = {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json;charset=UTF-8",
+      },
+    };
+    fetch(stepperURL, optionsURL)
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then((data) => {
+        console.log(data)
+        setStepperData(data.stepsList);
+      });
+
     let url =
       "https://temitourapi.azurewebsites.net/api/locations/getlocations";
     let options: RequestInit = {
@@ -267,10 +288,10 @@ function App() {
       socket.emit("reboot", "yes");
     }, 60000);
     setTimer(timeState);
-    if (steps.includes(location)) {
-      setStepperCounter(steps.indexOf(location));
-    } else if (steps.includes(convertName(location))) {
-      setStepperCounter(steps.indexOf(convertName(location)));
+    if (stepperData.includes(location)) {
+      setStepperCounter(stepperData.indexOf(location));
+    } else if (stepperData.includes(convertName(location))) {
+      setStepperCounter(stepperData.indexOf(convertName(location)));
     }
     socket.emit("message", location);
   };
@@ -412,7 +433,7 @@ function App() {
               activeStep={stepperCounter}
               connector={<StepperConnector />}
             >
-              {steps.map((label) => (
+              {stepperData.map((label) => (
                 <Step key={label}>
                   <StepLabel StepIconComponent={QontoStepIcon}>
                     {label}
@@ -445,9 +466,9 @@ function App() {
                         id="GoToNextLocation"
                         onClick={() => {
                           setStepperCounter(stepperCounter + 1);
-                          if (stepperCounter < steps.length - 1) {
+                          if (stepperCounter < stepperData.length - 1) {
                             sendLocation(
-                              convertAlias(steps[stepperCounter + 1])
+                              convertAlias(stepperData[stepperCounter + 1])
                             );
                           } else {
                             setIsLastPage(true);
@@ -455,9 +476,9 @@ function App() {
                         }}
                       >
                         Go to{" "}
-                        {stepperCounter >= steps.length - 1
+                        {stepperCounter >= stepperData.length - 1
                           ? "finish"
-                          : steps[stepperCounter + 1]}
+                          : stepperData[stepperCounter + 1]}
                       </button>
                     </>
                   ) : (
@@ -497,8 +518,8 @@ function App() {
                     id="GoToNextLocation"
                     onClick={() => {
                       setStepperCounter(stepperCounter + 1);
-                      if (stepperCounter < steps.length - 1) {
-                        sendLocation(convertAlias(steps[stepperCounter + 1]));
+                      if (stepperCounter < stepperData.length - 1) {
+                        sendLocation(convertAlias(stepperData[stepperCounter + 1]));
                       } else {
                         setIsLastPage(true);
                         socket.emit("message", "finish");
@@ -506,9 +527,9 @@ function App() {
                     }}
                   >
                     Go to{" "}
-                    {stepperCounter >= steps.length - 1
+                    {stepperCounter >= stepperData.length - 1
                       ? "finish"
-                      : steps[stepperCounter + 1]}
+                      : stepperData[stepperCounter + 1]}
                   </button>
                 </div>
               )}
