@@ -50,7 +50,7 @@ function App() {
   const [temiMovementData, setTemiMovementData] = useState<any>();
   const [currentSentence, setCurrentSentence] = useState<string>("");
   const [isLastPage, setIsLastPage] = useState<boolean>(false);
-  const [checked, setChecked] = useState(true);
+  const [checked, setChecked] = useState(false);
   const [isAtCore, setIsAtCore] = useState<boolean>(false);
   const [coreLocations, setCoreLocation] = useState<Array<string>>([
     "ai",
@@ -402,7 +402,6 @@ function App() {
                 <GreenSwitch
                   checked={checked}
                   onChange={switchChange}
-                  defaultChecked
                 />
               }
               label="Toggle TTS"
