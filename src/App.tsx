@@ -37,7 +37,7 @@ import {
 } from "@mui/material";
 
 function App() {
-  const steps = ["Reception", "1MCT", "The Core", "International"];
+  // const steps = ["Reception", "1MCT", "The Core", "International"];
   const socket = io("https://mcttemisocket.azurewebsites.net");
   const [stepperCounter, setStepperCounter] = useState(0);
   const [ShutdownCounter, setShutdownCounter] = useState(0);
@@ -119,7 +119,7 @@ function App() {
         setTemiMovementData(data.movementMessage["location"]);
       }
     });
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
