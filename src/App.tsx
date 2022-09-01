@@ -286,7 +286,7 @@ function App() {
     }
     let timeState = setTimeout(() => {
       socket.emit("reboot", "yes");
-    }, 60000);
+    }, 600000);
     setTimer(timeState);
     if (stepperData.includes(location)) {
       setStepperCounter(stepperData.indexOf(location));
