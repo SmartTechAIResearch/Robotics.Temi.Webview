@@ -7,6 +7,7 @@ import { blue, lightBlue, red } from "@mui/material/colors";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import {
   FormControlLabel,
+  Modal,
   Step,
   StepLabel,
   Stepper,
@@ -35,6 +36,17 @@ import {
   ListItemButton,
   ListItemText,
 } from "@mui/material";
+const style = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  // width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
 
 function App() {
   // const steps = ["Reception", "1MCT", "The Core", "International"];
@@ -52,6 +64,7 @@ function App() {
   const [isLastPage, setIsLastPage] = useState<boolean>(false);
   const [checked, setChecked] = useState(false);
   const [isAtCore, setIsAtCore] = useState<boolean>(false);
+  const [openTutorial, setOpenTutorial] = useState<boolean>(false);
   const [coreLocations, setCoreLocation] = useState<Array<string>>([
     "ai",
     "iotinf",
@@ -60,11 +73,12 @@ function App() {
   ]);
   const [timer, setTimer] = useState<any>();
   const [showInternational, setShowInternational] = useState<boolean>(false);
+  const handleOpen = () => setOpenTutorial(true);
+  const handleClose = () => setOpenTutorial(false);
 
   useEffect(() => {
     //API call to get location information
-    let stepperURL =
-      "https://temitourapi.azurewebsites.net/api/stepper";
+    let stepperURL = "https://temitourapi.azurewebsites.net/api/stepper";
     let optionsURL: RequestInit = {
       method: "GET",
       headers: {
@@ -79,7 +93,7 @@ function App() {
         }
       })
       .then((data) => {
-        console.log(data)
+        console.log(data);
         setStepperData(data.stepsList);
       });
 
@@ -174,7 +188,7 @@ function App() {
   }, [temiTtsData]);
 
   useEffect(() => {
-    //shutdown 
+    //shutdown
     if (ShutdownCounter === 15) {
       socket.emit("shutdown");
     }
@@ -199,7 +213,7 @@ function App() {
   }, [currentLocation]);
 
   useEffect(() => {
-    //reboot after 1 min of showing QR code in the end 
+    //reboot after 1 min of showing QR code in the end
     if (isLastPage) {
       setTimeout(() => {
         console.log("here");
@@ -210,7 +224,6 @@ function App() {
 
   //styling for stepper
   const StepperConnector = styled(StepConnector)(({ theme }) => {
-    
     return {
       [`&.${stepConnectorClasses.alternativeLabel}`]: {
         top: 10,
@@ -338,6 +351,12 @@ function App() {
           <Divider />
         </>
       ))}
+      <ListItemButton onClick={handleOpen}>
+        <ListItemText
+          primaryTypographyProps={{ fontSize: "20px" }}
+          primary={"Tutorial Video"}
+        />
+      </ListItemButton>
     </Box>
   );
 
@@ -380,7 +399,7 @@ function App() {
       backgroundColor: blue[300],
     },
   }));
-  //app html 
+  //app html
   return (
     <>
       <div className="">
@@ -399,10 +418,7 @@ function App() {
               id="switchLabel"
               value="end"
               control={
-                <GreenSwitch
-                  checked={checked}
-                  onChange={switchChange}
-                />
+                <GreenSwitch checked={checked} onChange={switchChange} />
               }
               label="Toggle TTS"
               labelPlacement="top"
@@ -518,7 +534,9 @@ function App() {
                     onClick={() => {
                       setStepperCounter(stepperCounter + 1);
                       if (stepperCounter < stepperData.length - 1) {
-                        sendLocation(convertAlias(stepperData[stepperCounter + 1]));
+                        sendLocation(
+                          convertAlias(stepperData[stepperCounter + 1])
+                        );
                       } else {
                         setIsLastPage(true);
                         socket.emit("message", "finish");
@@ -538,6 +556,24 @@ function App() {
         <div id="ttsDiv">
           <p className="">{currentSentence}</p>
         </div>
+      </div>
+      <div>
+        <Modal
+          open={openTutorial}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <iframe
+              width="1120"
+              height="630"
+              src="https://www.youtube.com/embed/_FNKdQrZekk"
+              title="YouTube video player"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            />
+          </Box>
+        </Modal>
       </div>
     </>
   );
