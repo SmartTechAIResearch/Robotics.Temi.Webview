@@ -20,10 +20,10 @@
   background-color: transparent;
   color: black;
 }
-#switchLabel{
+#switchLabel {
   margin: 0 0 1rem 0 !important;
 }
-.Mui-checked{
+.Mui-checked {
   color: #44c8f5 !important;
 }
 
@@ -157,7 +157,10 @@ span.MuiStepLabel-alternativeLabel {
 }
 span.Mui-active {
   font-size: xx-large !important;
-  font-weight: 700 
-  
-  !important;
+  font-weight: 700 !important;
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: space-between;
 }

@@ -7,6 +7,7 @@ import { blue, lightBlue, red } from "@mui/material/colors";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import {
   FormControlLabel,
+  Modal,
   Step,
   StepLabel,
   Stepper,
@@ -35,22 +36,35 @@ import {
   ListItemButton,
   ListItemText,
 } from "@mui/material";
+const style = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  // width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
 
 function App() {
-  const steps = ["Reception", "1MCT", "The Core", "International"];
+  // const steps = ["Reception", "1MCT", "The Core", "International"];
   const socket = io("https://mcttemisocket.azurewebsites.net");
   const [stepperCounter, setStepperCounter] = useState(0);
   const [ShutdownCounter, setShutdownCounter] = useState(0);
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [open, setOpen] = useState(false);
   const [locationData, setLocationData] = useState<Array<iLocationData>>([]);
+  const [stepperData, setStepperData] = useState<Array<any>>([".", ";"]);
   const [currentLocation, setCurrentLocation] = useState<iLocationData>();
   const [temiTtsData, setTemiTtsData] = useState<any>();
   const [temiMovementData, setTemiMovementData] = useState<any>();
   const [currentSentence, setCurrentSentence] = useState<string>("");
   const [isLastPage, setIsLastPage] = useState<boolean>(false);
-  const [checked, setChecked] = useState(true);
+  const [checked, setChecked] = useState(false);
   const [isAtCore, setIsAtCore] = useState<boolean>(false);
+  const [openTutorial, setOpenTutorial] = useState<boolean>(false);
   const [coreLocations, setCoreLocation] = useState<Array<string>>([
     "ai",
     "iotinf",
@@ -59,8 +73,30 @@ function App() {
   ]);
   const [timer, setTimer] = useState<any>();
   const [showInternational, setShowInternational] = useState<boolean>(false);
+  const handleOpen = () => setOpenTutorial(true);
+  const handleClose = () => setOpenTutorial(false);
 
   useEffect(() => {
+    //API call to get location information
+    let stepperURL = "https://temitourapi.azurewebsites.net/api/stepper";
+    let optionsURL: RequestInit = {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json;charset=UTF-8",
+      },
+    };
+    fetch(stepperURL, optionsURL)
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then((data) => {
+        console.log(data);
+        setStepperData(data.stepsList);
+      });
+
     let url =
       "https://temitourapi.azurewebsites.net/api/locations/getlocations";
     let options: RequestInit = {
@@ -79,27 +115,29 @@ function App() {
       .then((data) => {
         setLocationData(data);
       });
-
+    //connction with socket true
     socket.on("connect", () => {
       setIsConnected(true);
     });
+    //connection with socket false
     socket.on("disconnect", () => {
       setIsConnected(false);
     });
-
+    //listen to temi response socket for TTS
     socket.on("temiTtsMessage", (data) => {
       setTemiTtsData(data);
     });
+    //listen to temi response socket for movement
     socket.on("temiMovementMessage", (data) => {
       if (data.movementMessage["status"] === "complete") {
         setTemiMovementData(data.movementMessage["location"]);
       }
     });
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
+    //search correct text and emit to temi TTS
     const textAtLocation = () => {
       locationData.forEach((data) => {
         if (temiMovementData === data.name) {
@@ -115,6 +153,7 @@ function App() {
   }, [locationData, temiMovementData]);
 
   useEffect(() => {
+    //search next line of text & emit to temi
     const readNextTemiLine = () => {
       if (currentLocation !== undefined) {
         if (
@@ -149,12 +188,15 @@ function App() {
   }, [temiTtsData]);
 
   useEffect(() => {
+    //shutdown
     if (ShutdownCounter === 15) {
       socket.emit("shutdown");
     }
   }, [ShutdownCounter, socket]);
 
   useEffect(() => {
+    // check if location is core ai iotinf smartxr nextweb
+    // to be able to go to each location and visit all choice modules
     if (currentLocation !== undefined) {
       if (
         currentLocation.name === "core" ||
@@ -171,6 +213,7 @@ function App() {
   }, [currentLocation]);
 
   useEffect(() => {
+    //reboot after 1 min of showing QR code in the end
     if (isLastPage) {
       setTimeout(() => {
         console.log("here");
@@ -179,6 +222,7 @@ function App() {
     }
   }, [isLastPage, socket]);
 
+  //styling for stepper
   const StepperConnector = styled(StepConnector)(({ theme }) => {
     return {
       [`&.${stepConnectorClasses.alternativeLabel}`]: {
@@ -205,6 +249,7 @@ function App() {
     };
   });
 
+  //stepper styling
   const QontoStepIconRoot = styled("div")<{ ownerState: { active?: boolean } }>(
     ({ theme, ownerState }) => ({
       color:
@@ -232,6 +277,7 @@ function App() {
     })
   );
 
+  //stepper icons
   function QontoStepIcon(props: StepIconProps) {
     const { active, completed, className } = props;
 
@@ -246,21 +292,23 @@ function App() {
     );
   }
 
+  //send temi to specific location
   const sendLocation = (location: string) => {
     if (timer !== null) {
       clearTimeout(timer);
     }
     let timeState = setTimeout(() => {
       socket.emit("reboot", "yes");
-    }, 60000);
+    }, 600000);
     setTimer(timeState);
-    if (steps.includes(location)) {
-      setStepperCounter(steps.indexOf(location));
-    } else if (steps.includes(convertName(location))) {
-      setStepperCounter(steps.indexOf(convertName(location)));
+    if (stepperData.includes(location)) {
+      setStepperCounter(stepperData.indexOf(location));
+    } else if (stepperData.includes(convertName(location))) {
+      setStepperCounter(stepperData.indexOf(convertName(location)));
     }
     socket.emit("message", location);
   };
+  //fill drawer with locations from API
   const getList = () => (
     <Box
       role="presentation"
@@ -303,18 +351,28 @@ function App() {
           <Divider />
         </>
       ))}
+      <ListItemButton onClick={handleOpen}>
+        <ListItemText
+          primaryTypographyProps={{ fontSize: "20px" }}
+          primary={"Tutorial Video"}
+        />
+      </ListItemButton>
     </Box>
   );
+
+  //convert alias to location name
   const convertAlias = (alias: any) => {
     for (let location of locationData) {
       if (location.alias === alias) return location.name;
     }
   };
+  //convert location name to alias
   const convertName = (name: any) => {
     for (let location of locationData) {
       if (location.name === name) return location.alias;
     }
   };
+  //switch tts to mute or unmute
   const switchChange = (e) => {
     console.log("switch");
     // console.log(e.target.checked);
@@ -326,6 +384,7 @@ function App() {
       socket.emit("mute", "true");
     }
   };
+  //styling for switch
   const GreenSwitch = styled(Switch)(({ theme }) => ({
     "& .MuiSwitch-switchBase.Mui-checked": {
       color: blue[300],
@@ -340,7 +399,7 @@ function App() {
       backgroundColor: blue[300],
     },
   }));
-
+  //app html
   return (
     <>
       <div className="">
@@ -359,11 +418,7 @@ function App() {
               id="switchLabel"
               value="end"
               control={
-                <GreenSwitch
-                  checked={checked}
-                  onChange={switchChange}
-                  defaultChecked
-                />
+                <GreenSwitch checked={checked} onChange={switchChange} />
               }
               label="Toggle TTS"
               labelPlacement="top"
@@ -393,7 +448,7 @@ function App() {
               activeStep={stepperCounter}
               connector={<StepperConnector />}
             >
-              {steps.map((label) => (
+              {stepperData.map((label) => (
                 <Step key={label}>
                   <StepLabel StepIconComponent={QontoStepIcon}>
                     {label}
@@ -426,9 +481,9 @@ function App() {
                         id="GoToNextLocation"
                         onClick={() => {
                           setStepperCounter(stepperCounter + 1);
-                          if (stepperCounter < steps.length - 1) {
+                          if (stepperCounter < stepperData.length - 1) {
                             sendLocation(
-                              convertAlias(steps[stepperCounter + 1])
+                              convertAlias(stepperData[stepperCounter + 1])
                             );
                           } else {
                             setIsLastPage(true);
@@ -436,9 +491,9 @@ function App() {
                         }}
                       >
                         Go to{" "}
-                        {stepperCounter >= steps.length - 1
+                        {stepperCounter >= stepperData.length - 1
                           ? "finish"
-                          : steps[stepperCounter + 1]}
+                          : stepperData[stepperCounter + 1]}
                       </button>
                     </>
                   ) : (
@@ -478,8 +533,10 @@ function App() {
                     id="GoToNextLocation"
                     onClick={() => {
                       setStepperCounter(stepperCounter + 1);
-                      if (stepperCounter < steps.length - 1) {
-                        sendLocation(convertAlias(steps[stepperCounter + 1]));
+                      if (stepperCounter < stepperData.length - 1) {
+                        sendLocation(
+                          convertAlias(stepperData[stepperCounter + 1])
+                        );
                       } else {
                         setIsLastPage(true);
                         socket.emit("message", "finish");
@@ -487,9 +544,9 @@ function App() {
                     }}
                   >
                     Go to{" "}
-                    {stepperCounter >= steps.length - 1
+                    {stepperCounter >= stepperData.length - 1
                       ? "finish"
-                      : steps[stepperCounter + 1]}
+                      : stepperData[stepperCounter + 1]}
                   </button>
                 </div>
               )}
@@ -499,6 +556,24 @@ function App() {
         <div id="ttsDiv">
           <p className="">{currentSentence}</p>
         </div>
+      </div>
+      <div>
+        <Modal
+          open={openTutorial}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <iframe
+              width="1120"
+              height="630"
+              src="https://www.youtube.com/embed/_FNKdQrZekk"
+              title="YouTube video player"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            />
+          </Box>
+        </Modal>
       </div>
     </>
   );
