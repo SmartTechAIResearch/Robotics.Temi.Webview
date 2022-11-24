@@ -53,6 +53,7 @@ function App() {
   const socket = io("https://mctsockettemi.azurewebsites.net");
   const [stepperCounter, setStepperCounter] = useState(0);
   const [ShutdownCounter, setShutdownCounter] = useState(0);
+  const [sentenceCounter, setSentenceCounter] = useState(0);
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [open, setOpen] = useState(false);
   const [locationData, setLocationData] = useState<Array<iLocationData>>([]);
@@ -78,7 +79,7 @@ function App() {
 
   useEffect(() => {
     //API call to get location information
-    let stepperURL = "https://mcttemitourdatabase.azurewebsites.net/api/stepper";
+    let stepperURL = "https://mcttemitourdatabase.azurewebsites.net/api/stepper/UZ-Gent";
     let optionsURL: RequestInit = {
       method: "GET",
       headers: {
@@ -93,12 +94,11 @@ function App() {
         }
       })
       .then((data) => {
-        console.log(data);
-        setStepperData(data[0].stepsList);
+        setStepperData(data.stepsList);
       });
 
     let url =
-      "https://mcttemitourdatabase.azurewebsites.net/api/locations/getlocations";
+      "https://mcttemitourdatabase.azurewebsites.net/api/locations/UZ-Gent";
     let options: RequestInit = {
       method: "GET",
       headers: {
@@ -126,6 +126,7 @@ function App() {
     //listen to temi response socket for TTS
     socket.on("temiTtsMessage", (data) => {
       setTemiTtsData(data);
+      setSentenceCounter(sentenceCounter + 1);
     });
     //listen to temi response socket for movement
     socket.on("temiMovementMessage", (data) => {
@@ -133,59 +134,78 @@ function App() {
         setTemiMovementData(data.movementMessage["location"]);
       }
     });
+
+    // // DEBUGGING
+    // setTemiMovementData("start")
+    // setTimeout(() => {
+    //   console.log("DEBUGGING: Set to Start")
+    //   setSentenceCounter(sentenceCounter + 1);
+    // }, 2000)
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     //search correct text and emit to temi TTS
-    const textAtLocation = () => {
-      locationData.forEach((data) => {
-        if (temiMovementData === data.name) {
+    (() => {
+
+      let loc = locationData.filter(location => location.alias === temiMovementData);
+      if (loc !== undefined) {
+        let data = loc[0]; // Get the first item, which should be the only one
+        if (data) {
+          console.log(data);
+          setSentenceCounter(0);
           setCurrentLocation(data);
-          var TextToSay = data.textList;
-          socket.emit("tts", TextToSay[0]);
-          setCurrentSentence(TextToSay[0]);
+          let firstSentence = data.textList[0];
+
+          console.log(sentenceCounter + ": " + firstSentence)
+          socket.emit("tts", firstSentence);
+          setCurrentSentence(firstSentence); // Set the subtitles
         }
-      });
-    };
-    textAtLocation();
+      }
+    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locationData, temiMovementData]);
 
   useEffect(() => {
     //search next line of text & emit to temi
-    const readNextTemiLine = () => {
+    (() => {
       if (currentLocation !== undefined) {
-        if (
-          currentLocation.textList[
-            currentLocation.textList.indexOf(temiTtsData.temiTtsMessage.text) +
-              1
-          ] !== undefined
-        ) {
-          socket.emit(
-            "tts",
-            currentLocation!.textList[
-              currentLocation!.textList.indexOf(
-                temiTtsData.temiTtsMessage.text
-              ) + 1
-            ]
-          );
-          setCurrentSentence(
-            currentLocation!.textList[
-              currentLocation!.textList.indexOf(
-                temiTtsData.temiTtsMessage.text
-              ) + 1
-            ]
-          );
+        
+        let sentence =
+          currentLocation!.textList[
+            sentenceCounter
+          ]
+
+          
+          if (sentence !== undefined ) {
+          console.log(sentenceCounter + ": " + sentence)
+          
+          // Pause the speech
+          if (sentence === "...") {
+            setTimeout(() => {
+              console.log("Waiting for a second")
+              setCurrentSentence("...");
+            }, 500)
+          } else {
+            socket.emit( "tts", sentence);
+            setCurrentSentence(sentence);
+          }
+          
+          // // Debugging
+          // setTimeout(() => {
+          //   setSentenceCounter(sentenceCounter + 1);
+          // }, 2000)
+
         } else {
+
           setCurrentLocation(undefined);
           setCurrentSentence("");
         }
       }
-    };
-    readNextTemiLine();
+    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [temiTtsData]);
+  }, [sentenceCounter]);
 
   useEffect(() => {
     //shutdown
@@ -212,15 +232,14 @@ function App() {
     }
   }, [currentLocation]);
 
-  useEffect(() => {
-    //reboot after 1 min of showing QR code in the end
-    if (isLastPage) {
-      setTimeout(() => {
-        console.log("here");
-        socket.emit("reboot", "yes");
-      }, 60000);
-    }
-  }, [isLastPage, socket]);
+  // useEffect(() => {
+  //   //reboot after 1 min of showing QR code in the end
+  //   if (isLastPage) {
+  //     setTimeout(() => {
+  //       socket.emit("reboot", "yes");
+  //     }, 60000);
+  //   }
+  // }, [isLastPage, socket]);
 
   //styling for stepper
   const StepperConnector = styled(StepConnector)(({ theme }) => {
@@ -293,21 +312,29 @@ function App() {
   }
 
   //send temi to specific location
-  const sendLocation = (location: string) => {
+  const sendLocation = (location: string, name: string) => {
+
+    setIsLastPage(false);
+    
     if (timer !== null) {
       clearTimeout(timer);
     }
+
+    // Reboot if needed
     let timeState = setTimeout(() => {
       socket.emit("reboot", "yes");
     }, 600000);
     setTimer(timeState);
-    if (stepperData.includes(location)) {
-      setStepperCounter(stepperData.indexOf(location));
-    } else if (stepperData.includes(convertName(location))) {
-      setStepperCounter(stepperData.indexOf(convertName(location)));
+
+    if (stepperData.includes(name)) {
+      let index = stepperData.indexOf(name)
+      setStepperCounter(index);
     }
     socket.emit("message", location);
+    setTemiMovementData(location); // DEBUGGING
   };
+
+
   //fill drawer with locations from API
   const getList = () => (
     <Box
@@ -319,10 +346,10 @@ function App() {
         <>
           <ListItemButton
             key={index}
+            tabIndex={index}
             onClick={(event) => {
-              if (item.icon === "CancelIcon") {
-              }
-              sendLocation(item.name);
+              setIsLastPage(false);
+              sendLocation(item.alias, item.name);
             }}
           >
             {
@@ -345,14 +372,20 @@ function App() {
             }
             <ListItemText
               primaryTypographyProps={{ fontSize: "20px" }}
-              primary={item.alias.charAt(0).toUpperCase() + item.alias.slice(1)}
+              primary={item.name.split("-").join(" ")}
             />
           </ListItemButton>
           <Divider />
         </>
       ))}
+      <Divider />
+      <Divider />
+      <br />
+
       <ListItemButton onClick={handleOpen}>
         <ListItemText
+          key={locationData!.length + 1}
+          tabIndex={locationData!.length + 1} 
           primaryTypographyProps={{ fontSize: "20px" }}
           primary={"Tutorial Video"}
         />
@@ -361,17 +394,18 @@ function App() {
   );
 
   //convert alias to location name
-  const convertAlias = (alias: any) => {
+  const aliasToName = (alias: any) => {
     for (let location of locationData) {
       if (location.alias === alias) return location.name;
     }
   };
   //convert location name to alias
-  const convertName = (name: any) => {
+  const nameToAlias = (name: any) => {
     for (let location of locationData) {
       if (location.name === name) return location.alias;
     }
   };
+
   //switch tts to mute or unmute
   const switchChange = (e) => {
     console.log("switch");
@@ -399,6 +433,8 @@ function App() {
       backgroundColor: blue[300],
     },
   }));
+
+
   //app html
   return (
     <>
@@ -451,7 +487,7 @@ function App() {
               {stepperData.map((label) => (
                 <Step key={label}>
                   <StepLabel StepIconComponent={QontoStepIcon}>
-                    {label}
+                    {label.split('-').join(' ')}
                   </StepLabel>
                 </Step>
               ))}
@@ -463,67 +499,27 @@ function App() {
             <>
               <div id="currentLocation">
                 <h1>Feedback</h1>
+              <p>Wat vond je van deze rondleiding? <br />
+                Laat gerust een opmerking achter bij mijn menselijke collega's!</p>
               </div>
-              <img src="/qr.jpg" id="qr" alt="mctLgo"></img>
+              <div className="lowerRight">
+              <button
+                className="btn-next"
+                onClick={(event) => {
+                  sendLocation(
+                    nameToAlias(stepperData[0]),
+                    stepperData[0]
+                  );
+                }} 
+              >
+                Stuur terug naar start
+                </button>
+              </div>
+              {/* <img src="/qr.jpg" id="qr" alt="mctLgo"></img> */}
             </>
           ) : (
             <>
-              {isAtCore ? (
-                <>
-                  {showInternational ? (
-                    <>
-                      <button className="hidden" id="cancelButton">
-                        <CancelIcon
-                          sx={{ fontSize: 100, color: red[500] }}
-                        ></CancelIcon>
-                      </button>
-                      <button
-                        id="GoToNextLocation"
-                        onClick={() => {
-                          setStepperCounter(stepperCounter + 1);
-                          if (stepperCounter < stepperData.length - 1) {
-                            sendLocation(
-                              convertAlias(stepperData[stepperCounter + 1])
-                            );
-                          } else {
-                            setIsLastPage(true);
-                          }
-                        }}
-                      >
-                        Go to{" "}
-                        {stepperCounter >= stepperData.length - 1
-                          ? "finish"
-                          : stepperData[stepperCounter + 1]}
-                      </button>
-                    </>
-                  ) : (
-                    <div className="multipleOptions">
-                      {coreLocations.map((label) => (
-                        <button
-                          id="GoToNextLocation"
-                          onClick={() => {
-                            console.log(coreLocations);
-                            if (coreLocations.length === 1) {
-                              sendLocation(label);
-                              setShowInternational(true);
-                            } else {
-                              setCoreLocation(
-                                coreLocations.filter((e) => e !== label)
-                              );
-                              setStepperCounter(stepperCounter);
-
-                              sendLocation(label);
-                            }
-                          }}
-                        >
-                          Go to {" " + convertName(label)}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </>
-              ) : (
-                <div id="title">
+              <div id="title">
                   <button className="hidden" id="cancelButton">
                     <CancelIcon
                       sx={{ fontSize: 100, color: red[500] }}
@@ -532,10 +528,12 @@ function App() {
                   <button
                     id="GoToNextLocation"
                     onClick={() => {
-                      setStepperCounter(stepperCounter + 1);
                       if (stepperCounter < stepperData.length - 1) {
+                        console.log(stepperData[stepperCounter + 1])
                         sendLocation(
-                          convertAlias(stepperData[stepperCounter + 1])
+                          // Convert to the alias, which is the Temi location
+                          nameToAlias(stepperData[stepperCounter + 1]),
+                          stepperData[stepperCounter + 1]
                         );
                       } else {
                         setIsLastPage(true);
@@ -543,13 +541,12 @@ function App() {
                       }
                     }}
                   >
-                    Go to{" "}
+                    Ga naar {" "}
                     {stepperCounter >= stepperData.length - 1
-                      ? "finish"
-                      : stepperData[stepperCounter + 1]}
+                      ? "einde"
+                      : stepperData[stepperCounter + 1].split('-').join(" ")}
                   </button>
                 </div>
-              )}
             </>
           )}
         </div>

@@ -3,7 +3,8 @@ export interface iLocationData {
   name: string;
   alias: string;
   textList: Array<string>;
-  icon : string;
+  icon: string;
+  region: string;
 }
 
 export interface iTtsMessage {

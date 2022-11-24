@@ -16,6 +16,16 @@
   bottom: 0;
 }
 
+.lowerRight {
+  margin-bottom: 1px;
+  margin-right: 1px;
+  width: 300px;
+  height: 300px;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+}
+
 #refreshPage {
   background-color: transparent;
   color: black;
@@ -65,7 +75,7 @@
   margin: auto 0;
 }
 
-#GoToNextLocation {
+#GoToNextLocation, .btn-next {
   border-radius: 50%;
   text-align: center;
   height: 15rem;

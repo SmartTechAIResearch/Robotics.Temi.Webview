@@ -1,0 +1,7 @@
+{
+    "_id": {
+        "$oid": "637fa986dbf7302abe3ab6b7"
+    },
+    "stepsList": ["Atrium", "Receptie-UZ", "Receptie-Oogheelkunde", "Wachtruimte", "Aanmeldbalie", "Afsprakenbalie", "Toilet", "Veerle Verschooren", "Jules Francois"],
+    "region": "UZ-Gent"
+}

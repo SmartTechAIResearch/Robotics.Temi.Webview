@@ -25,13 +25,16 @@ import { io, Socket } from "socket.io-client";
 export function Admin() {
   const [locationData, setLocationData] = useState<Array<iLocationData>>([]);
   const [ttsInput, setTtsInput] = useState<string>("");
+  const [locationInput, setLocationInput] = useState<string>("");
+  const [locationResponse, setLocationResponse] = useState<string>("");
+
   const sendLocation = (location: string) => {
     socket!.emit("message", location);
   };
   const [socket, setSocket] = useState<Socket>();
   useEffect(() => {
     let url =
-      "https://mcttemitourdatabase.azurewebsites.net/api/locations/getlocations";
+      "https://mcttemitourdatabase.azurewebsites.net/api/locations/getLocations";
     let options: RequestInit = {
       method: "GET",
       headers: {
@@ -46,17 +49,46 @@ export function Admin() {
         }
       })
       .then((data) => {
+        console.log(data);
         setLocationData(data);
       });
     setSocket(io("https://mctsockettemi.azurewebsites.net"));
   }, []);
+
   const sendTTS = () => {
     socket!.emit("tts", ttsInput);
+  };
+
+  const addLocation = () => {
+    let stepperURL = "https://mcttemitourdatabase.azurewebsites.net/api/add/location";
+    let optionsURL: RequestInit = {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json;charset=UTF-8",
+      },
+      body: locationInput
+    };
+    fetch(stepperURL, optionsURL)
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then((data) => {
+        console.log(data);
+        setLocationResponse(data);
+      });
   };
 
   const updateTts = (event: any) => {
     setTtsInput(event.target.value);
   };
+
+  const updateLocation = (event: any) => {
+    setLocationInput(event.target.value);
+  }
+
 
   return (
     <Container maxWidth="sm">
@@ -66,7 +98,7 @@ export function Admin() {
             {locationData!.map((item, index) => (
               <>
                 <ListItemButton
-                  key={index}
+                  key={item.name}
                   onClick={(event) => {
                     if (item.icon === "CancelIcon") {
                     }
@@ -92,6 +124,7 @@ export function Admin() {
                     ></SvgIcon>
                   }
                   <ListItemText
+                    key={item.name}
                     primaryTypographyProps={{ fontSize: "20px" }}
                     primary={
                       item.alias.charAt(0).toUpperCase() + item.alias.slice(1)
@@ -112,6 +145,21 @@ export function Admin() {
             <Button variant="contained" onClick={sendTTS}>
               Send TTS
             </Button>
+          </div>
+          <div className="buttonGroup">
+            <TextField
+              id="locationText"
+              label="location"
+              variant="outlined"
+              multiline
+              onChange={updateLocation}
+            />
+            <Button variant="contained" onClick={addLocation}>
+              Add new Location
+            </Button>
+          </div>
+          <div>
+              <pre>{ JSON.stringify(locationResponse) }</pre>
           </div>
         </nav>
       </Box>

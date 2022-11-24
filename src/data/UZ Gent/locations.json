@@ -1,0 +1,174 @@
+[
+    {
+        "name": "Start",
+        "alias": "atrium",
+        "icon": "Refreshicon",
+        "textList": [
+            "Welkom!",
+            "Mijn naam is Temi. U bevindt zich in het Atrium, een centrale wacht en aanmeldruimte",
+            "van de dienst Oogheelkunde van het UZ Gent.",
+            "Hoe kan ik u helpen?"
+        ],
+        "region": "UZ-Gent"
+    },
+    {
+        "name": "Receptie-UZ",
+        "alias": "receptie",
+        "icon": "Refreshicon",
+        "textList": [
+            "Volgt u me even tot aan de dichtsbijzijnde aanmeldzuil, vlakbij ingang 69, route 690.",
+            "Steek uw identiteitskaart in de gleuf rechts onderaan de aanmeldzuil.",
+            "Vraag, indien nodig, uw begeleider of een UZ medewerker om de instructies te volgen op het scherm.",
+            "Na de aanmelding ontvangt u een aanmeldbriefje.",
+            "Bent u met de wagen gekomen? Vergeet dan niet het parkeerticket te scannen.",
+            "Neem uw identiteitskaart terug.",
+            "Zijn er problemen? Meld u dan aan de centrale aanmeldzuilen gelegen bij ingang 50. Volg hiervoor route 500.",
+            "U bent nu aangemeld op het UZ Gent. De volgende stap is om u aan te melden op de dienst Oogheelkunde.",
+            "Volgt u maar."
+        ],
+        "region": "UZ-Gent"
+    },
+    {
+        "name": "Receptie-Oogheelkunde",
+        "alias": "receptie-eyes",
+        "icon": "EyeIcon",
+        "textList": [
+            "Ik neem u graag even mee tot aan de scanningszuil van de dienst Oogheelkunde op route 690.",
+            "Uw aanmeldticket moet hier gescand worden.",
+            "Op het scherm verschijnen uw gegevens en uw afspraak",
+            "Vraag, indien nodig, uw begeleider of een UZ medewerker om de instructies te volgen op het scherm.",
+            "Indien de informatie correct is, kan u op 'doorgaan' klikken.",
+            "Uit een printer komen barcodes. U mag deze barcodes aan de arts of verpleegkundige geven bij de start van uw consultatie.",
+            "Ondervindt u problemen, dan kan u hulp en informatie verkrijgen bij de UZ mederwerken aan de balie",
+            "Neem nu gerust plaats in de wachtruimte",
+            "Ik toon u even waar dat is"
+        ],
+        "region": "UZ-Gent"
+    },
+    {
+        "name": "Wachtruimte",
+        "alias": "waiting-area",
+        "icon": "WaitIcon",
+        "textList": [
+            "In het atrium bevindt zich een centrale wachtruimte",
+            "Hier kan u wachten tot een verpleegkundige of arts u komt halen",
+            "Indien u nog niet aangemeld bent, dan kan ik u hiermee verder helpen. Ik neem u dan mee naar de aanmeldbalie."
+        ],
+        "region": "UZ-Gent"
+    },
+    {
+        "name": "Aanmeldbalie",
+        "alias": "aanmeldbalie",
+        "icon": "Refreshicon",
+        "textList": [
+            "Heeft u problemen bij het aanmelden?",
+            "Volgt u me even mee naar de aanmeldbalie, route 690.",
+            "Daar kan een menselijke collega van het UZ Gent u verder helpen."
+        ],
+        "region": "UZ-Gent"
+    },
+    {
+        "name": "Afsprakenbalie",
+        "alias": "afsprakenbalie",
+        "icon": "Refreshicon",
+        "textList": [
+            "Wenst u een afspraak te maken op de dienst Oogheelkunde?",
+            "Volgt u me even mee naar de afsprakenbalie.",
+            "Daar kan een menselijke collega van het UZ Gent u verder helpen.",
+            "Ik toon u nu graag even de weg naar de toiletten."
+        ],
+        "region": "UZ-Gent"
+    },
+    {
+        "name": "Toilet",
+        "alias": "toilet",
+        "icon": "Toileticon",
+        "textList": [
+            "Wanneer u deze deur opent, vindt u twee ruimere toiletten aan uw rechterzijde",
+            "Volgt u me nog even mee tot aan het kunstwerk van Veerle Verschooren"
+        ],
+        "region": "UZ-Gent"
+    },
+    {
+        "name": "Veerle Verschooren",
+        "alias": "veerle-verschooren",
+        "icon": "ArtIcon",
+        "textList": [
+            " 'er was eens' luidt de titel van dit glazen kunstwerk.",
+            "Dit glaswerk wordt permanent tentoongesteld in het atrium van de dienst Oogheelkunde",
+            "De titel verwijst naar het begin van onze gekende en geliefde sprookjes",
+            "...",
+            "Er was eens ... of het nu om een prinsesje, een jonge prins of een broer of zus gaat,",
+            "veelal gaan de sprookjes over zoektochten.",
+            "Moeilijke of vreemde omstandigheden waarin kinderen belanden.",
+            "Ze worden op de proef gesteld en bedenken oplossingen",
+            "om uit de greep van volwassenen te komen.",
+            "Het gaat over kinderen loslaten.",
+            "Als ouder, als verzorgen of als opvoeder.",
+            "Loslaten odpat kinderen zouden kunnen leren, ontdekken en sterker uit beproevingen komen.",
+            "...",
+            "Dit glazen kunstwerk, gemaakt door ontwerpster Veerle Verschooren,",
+            " verwijst naar deze dappere sprookjesfiguren",
+            "die, eenmaal de tijd er rijp voor is,",
+            "bevrijd worden uit hun veilige cocon.",
+            "...",
+            "De kunstenares experimenteerde hierbij met de Middeleeuwse glas-in-lood techniek en de ruimtelijkheid",
+            "...",
+            "Bij de toren op de dienst Oogheelkunde werd gewerkt met gehard transparant floatglas.",
+            "Op het 8 millimeter dikke glas werd een tekening aangebracht door de zandstraaltechniek.",
+            "Hierbij wordt zand onder hoge druk tegen het glas gespoten.",
+            "Door het glas af te plakken met een zelfklevende folie,",
+            "kan een tekening aangebracht worden op de folievrije stukken.",
+            "Op plaatsen waar de folie kleefde, blijft het glas helder.",
+            "...",
+            "De glazen toren is een reflectie naar het gedachtengoed over de weerbaarheid van kinderen",
+            "over het beschermen en loslaten van kinderen.",
+            "De draak, het doolhof, de doornstruik, zijn immers symbool van de hindernsisen",
+            " en uitdagingen die kinderen op hun pad krijgen.",
+            "De gezandstraalde tekening op de toren heeft van dichtbij een serene en evenwichtige impressie.",
+            "Op een afstand kan de tekening chaotischer lijken.",
+            "...",
+            "De toren die een diameter heeft van 1 meter en een hoogte van 3 meter bevat nog een belangrijk element.",
+            "Centraal hangt een mondgeblazen, glazen bel van ongeveer 35 centimeter groot,",
+            "waarop een meisjesgezicht gegraveerd werd.",
+            "Voor deze gravure gebruikte de kunstenares een apparaatje met",
+            "een draaikop, de dremel genaamd, met daarop een diamantstift",
+            "...",
+            "In september 2021 werd het kunstwerk geschonken aan de dienst Oogheelkunde.",
+            "Speciale dank gaat hier uit naar de schenkers en de kunstenares Veerle Verschooren.",
+            "...",
+            "Vervolgens gaan we door naar de bibliotheek Jules François"
+        ],
+        "region": "UZ-Gent"
+    },
+    {
+        "name": "Jules Francois",
+        "alias": "library",
+        "icon": "LibraryIcon",
+        "textList": [
+            "Welkom in de bibliotheek Jules François.",
+            "...",
+            "Emile Jules Marie Joseph François, geboren op 24 mei 1907,",
+            "was een Belgische hoogleraar en arts met een specialisatie in ooggeneeskunde.",
+            "...",
+            "Professor François liet zijn bibliotheek na aan de Universiteit Gent,",
+            "meer bepaald aan de Stichting Jules François.",
+            "Op voorwaarde dat zijn unieke collectie boeken en tijdschriften zou worden verder gezet.",
+            "...",
+            "Van over de hele wereld zijn de meeste oftalmologische tijdschriften aanwezig, dit vanaf hun vroegste publicaties.",
+            "Het ruime aantal en in meerdere talen aanwezige boeken en tijdschriften",
+            "verenigt wat over het specifieke domein is gepubliceerd.",
+            "...",
+            "De Stichting Jules François spant zich in voor het actueel houden van de bibliotheek,",
+            "met de financiële steun van onder meer het Belgisch oftalmologisch gezelschap",
+            "een aantal andere Belgische gezelschappen en, als belangrijkste ondersteuner",
+            "het departement oftalmologie van de Rijksuniversiteit Gent.",
+            "...",
+            "Ook vandaag kunnen nog boeken en tijdschriften ontleend worden.",
+            "Neem rustig een kijkje in de impressionante bibliotheek Jules François.",
+            "...",
+            "Dit was de rondleiding. Heb je nog vragen? Stel ze gerust aan enkele medewerkers!"
+        ],
+        "region": "UZ-Gent"
+    }
+]
