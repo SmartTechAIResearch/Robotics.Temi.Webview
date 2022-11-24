@@ -94,7 +94,7 @@ function App() {
       })
       .then((data) => {
         console.log(data);
-        setStepperData(data.stepsList);
+        setStepperData(data[0].stepsList);
       });
 
     let url =
