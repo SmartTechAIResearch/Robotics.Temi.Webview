@@ -31,7 +31,7 @@ export function Admin() {
   const [socket, setSocket] = useState<Socket>();
   useEffect(() => {
     let url =
-      "https://temitourapi.azurewebsites.net/api/locations/getlocations";
+      "https://mcttemitourdatabase.azurewebsites.net/api/locations/getlocations";
     let options: RequestInit = {
       method: "GET",
       headers: {
@@ -48,7 +48,7 @@ export function Admin() {
       .then((data) => {
         setLocationData(data);
       });
-    setSocket(io("https://mcttemisocket.azurewebsites.net"));
+    setSocket(io("https://mctsockettemi.azurewebsites.net"));
   }, []);
   const sendTTS = () => {
     socket!.emit("tts", ttsInput);

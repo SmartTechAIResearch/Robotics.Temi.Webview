@@ -50,7 +50,7 @@ const style = {
 
 function App() {
   // const steps = ["Reception", "1MCT", "The Core", "International"];
-  const socket = io("https://mcttemisocket.azurewebsites.net");
+  const socket = io("https://mctsockettemi.azurewebsites.net");
   const [stepperCounter, setStepperCounter] = useState(0);
   const [ShutdownCounter, setShutdownCounter] = useState(0);
   const [isConnected, setIsConnected] = useState(socket.connected);
@@ -78,7 +78,7 @@ function App() {
 
   useEffect(() => {
     //API call to get location information
-    let stepperURL = "https://temitourapi.azurewebsites.net/api/stepper";
+    let stepperURL = "https://mcttemitourdatabase.azurewebsites.net/api/stepper";
     let optionsURL: RequestInit = {
       method: "GET",
       headers: {
@@ -98,7 +98,7 @@ function App() {
       });
 
     let url =
-      "https://temitourapi.azurewebsites.net/api/locations/getlocations";
+      "https://mcttemitourdatabase.azurewebsites.net/api/locations/getlocations";
     let options: RequestInit = {
       method: "GET",
       headers: {
