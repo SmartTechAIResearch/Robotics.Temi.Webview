@@ -1,6 +1,6 @@
 // #region imports
 import { Player } from '@lottiefiles/react-lottie-player';
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import "./css/App.css";
 import { iLocationData } from "../interfaces/interfaces";
 import { io } from "socket.io-client";
@@ -84,11 +84,6 @@ function App() {
   
   const handleOpen = () => setOpenTutorial(true);
   const handleClose = () => setOpenTutorial(false);
-
-
-  const setSubtitle = (subtitle) => {
-    setCurrentSentence(subtitle)
-  }
 
   const test = () => {
     console.log(sentenceCounter, temiMovementData, currentLocation);
@@ -477,12 +472,12 @@ function App() {
     </Box>
   );
 
-  //convert alias to location name
-  const aliasToName = (alias: any) => {
-    for (let location of locationData) {
-      if (location.alias === alias) return location.name;
-    }
-  };
+  // //convert alias to location name
+  // const aliasToName = (alias: any) => {
+  //   for (let location of locationData) {
+  //     if (location.alias === alias) return location.name;
+  //   }
+  // };
   //convert location name to alias
   const nameToAlias = (name: any) => {
     for (let location of locationData) {
