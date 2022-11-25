@@ -1,0 +1,8 @@
+{
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ],
+    "appService.defaultWebAppToDeploy": "/subscriptions/a3cd4549-2c0f-42ab-9048-106a824a87d4/AppServices/subscriptions/a3cd4549-2c0f-42ab-9048-106a824a87d4/resourceGroups/MCTTemi/providers/Microsoft.Web/sites/MCTTemiTour",
+    "appService.deploySubpath": "."
+}

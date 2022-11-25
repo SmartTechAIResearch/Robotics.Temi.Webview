@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+// #region imports
+import { Player } from '@lottiefiles/react-lottie-player';
+import { useCallback, useEffect, useRef, useState } from "react";
 import "./css/App.css";
 import { iLocationData } from "../interfaces/interfaces";
 import { io } from "socket.io-client";
@@ -48,36 +50,117 @@ const style = {
   p: 4,
 };
 
+//#endregion
+
 function App() {
   // const steps = ["Reception", "1MCT", "The Core", "International"];
   const socket = io("https://mctsockettemi.azurewebsites.net");
   const [stepperCounter, setStepperCounter] = useState(0);
   const [ShutdownCounter, setShutdownCounter] = useState(0);
-  const [sentenceCounter, setSentenceCounter] = useState(0);
+  const [sentenceCounter, setSentenceCounter] = useState(-1);
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [open, setOpen] = useState(false);
-  const [locationData, setLocationData] = useState<Array<iLocationData>>([]);
-  const [stepperData, setStepperData] = useState<Array<any>>([".", ";"]);
-  const [currentLocation, setCurrentLocation] = useState<iLocationData>();
-  const [temiTtsData, setTemiTtsData] = useState<any>();
-  const [temiMovementData, setTemiMovementData] = useState<any>();
-  const [currentSentence, setCurrentSentence] = useState<string>("");
-  const [isLastPage, setIsLastPage] = useState<boolean>(false);
   const [checked, setChecked] = useState(false);
-  const [isAtCore, setIsAtCore] = useState<boolean>(false);
   const [openTutorial, setOpenTutorial] = useState<boolean>(false);
-  const [coreLocations, setCoreLocation] = useState<Array<string>>([
-    "ai",
-    "iotinf",
-    "smartxr",
-    "nextweb",
-  ]);
-  const [timer, setTimer] = useState<any>();
-  const [showInternational, setShowInternational] = useState<boolean>(false);
+  const [isLastPage, setIsLastPage] = useState<boolean>(false);
+  const [startSpeaking, setStartSpeaking] = useState<boolean>(false);
+  const [nextMessage, setNextMessage] = useState<boolean>(false);
+
+  const [locationData, setLocationData] = useState<Array<iLocationData>>([]);
+  const [stepperData, setStepperData] = useState<Array<any>>(["START", "FINISH"]);
+  const [currentLocation, setCurrentLocation] = useState<iLocationData>();
+  const [temiMovementData, setTemiMovementData] = useState<string>("");
+  const [currentSentence, setCurrentSentence] = useState<string>("");
+  
+  // const [isAtCore, setIsAtCore] = useState<boolean>(false);
+  // const [coreLocations, setCoreLocation] = useState<Array<string>>([
+  //   "ai",
+  //   "iotinf",
+  //   "smartxr",
+  //   "nextweb",
+  // ]);
+  // const [timer, setTimer] = useState<any>();
+  // const [showInternational, setShowInternational] = useState<boolean>(false);
+  
   const handleOpen = () => setOpenTutorial(true);
   const handleClose = () => setOpenTutorial(false);
 
+
+  const setSubtitle = (subtitle) => {
+    setCurrentSentence(subtitle)
+  }
+
+  const test = () => {
+    console.log(sentenceCounter, temiMovementData, currentLocation);
+  
+    if (sentenceCounter >= 0) {
+      if (locationData.length > 0) {
+        if (currentLocation) {
+          let sentence = currentLocation.textList[sentenceCounter]
+          if (sentence) {
+            socket.emit("tts", sentence)
+          }
+        }
+      }
+    }
+  }
+
   useEffect(() => {
+    let loc = locationData.filter(location => location.alias === temiMovementData);
+    setCurrentLocation(loc[loc.length - 1]);
+
+    if (temiMovementData !== "") {
+      setStartSpeaking(true);
+      setSentenceCounter(0);
+    }
+    // Start speaking by setting the SentenceCounter to 0
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [temiMovementData]);
+  
+  useEffect(() => {
+    // console.log("Speaking texts from location", temiMovementData)
+    test();
+    // if (locationData) {
+    //   let data = locationData.filter(location => location.alias === temiMovementData);
+    //   if (data.length > 0) {
+    //     let locationData = data[data.length - 1];
+    //     if (locationData) {
+    //       let sentence = locationData.textList[sentenceCounter]
+    //       if (sentence) {
+    //         socket.emit("tts", sentence)
+    //       }
+    //     }
+    //   }
+    // }
+    
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sentenceCounter, startSpeaking]);
+
+  useEffect(() => {
+    if (startSpeaking) console.log("We will start speaking now!");
+  }, [startSpeaking])
+
+  useEffect(() => {
+    if (nextMessage) {
+      console.log("Showing next message!")
+      if (currentLocation) {
+        if (sentenceCounter < currentLocation.textList.length -1) {
+          setSentenceCounter(sentenceCounter + 1);
+        } else {
+          setCurrentSentence("");
+          setSentenceCounter(-1);
+          setStartSpeaking(false);
+          setCurrentLocation(undefined);
+        }
+      }
+      setNextMessage(false);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nextMessage])
+
+  // Fetch the default information and get the socket connection on!
+  useEffect(() => {
+    //#region Fetch the default information
     //API call to get location information
     let stepperURL = "https://mcttemitourdatabase.azurewebsites.net/api/stepper/UZ-Gent";
     let optionsURL: RequestInit = {
@@ -115,6 +198,9 @@ function App() {
       .then((data) => {
         setLocationData(data);
       });
+
+      //#endregion
+
     //connction with socket true
     socket.on("connect", () => {
       setIsConnected(true);
@@ -123,114 +209,105 @@ function App() {
     socket.on("disconnect", () => {
       setIsConnected(false);
     });
+
+
     //listen to temi response socket for TTS
-    socket.on("temiTtsMessage", (data) => {
-      setTemiTtsData(data);
-      setSentenceCounter(sentenceCounter + 1);
+    socket.on("ttsMessage", (data) => {
+      // TODO: Make sure the subtitles move asynchronously from the TTS
+      setCurrentSentence(data.ttsMessage)
     });
-    //listen to temi response socket for movement
+
+    socket.on("temiTtsMessage", (data) => {
+      // Go to the next message!
+      setNextMessage(true);
+    });
+
+    // Temi sends a message here when his movement is finished.
+    // Use it to reset the sentenceCounter and start speaking the first sentence of the arrived location.
     socket.on("temiMovementMessage", (data) => {
+      // First line
       if (data.movementMessage["status"] === "complete") {
-        setTemiMovementData(data.movementMessage["location"]);
+        setTemiMovementData(data.movementMessage["location"]); 
       }
     });
 
-    // // DEBUGGING
-    // setTemiMovementData("start")
-    // setTimeout(() => {
-    //   console.log("DEBUGGING: Set to Start")
-    //   setSentenceCounter(sentenceCounter + 1);
-    // }, 2000)
+    socket.onAny((event, data) => {
+      console.debug(event, data);
+    })
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    //search correct text and emit to temi TTS
-    (() => {
+  // useEffect(() => {
+  //   //search correct text and emit to temi TTS
+  //   (() => {
 
-      let loc = locationData.filter(location => location.alias === temiMovementData);
-      if (loc !== undefined) {
-        let data = loc[0]; // Get the first item, which should be the only one
-        if (data) {
-          console.log(data);
-          setSentenceCounter(0);
-          setCurrentLocation(data);
-          let firstSentence = data.textList[0];
+  //     let loc = locationData.filter(location => location.alias === temiMovementData);
+  //     if (loc !== undefined) {
+  //       // let data = loc[0]; // Get the first item, which should be the only one
+  //       // if (data) speak(data)
+  //     }
+  //   })();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [locationData, temiMovementData]);
 
-          console.log(sentenceCounter + ": " + firstSentence)
-          socket.emit("tts", firstSentence);
-          setCurrentSentence(firstSentence); // Set the subtitles
-        }
-      }
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [locationData, temiMovementData]);
-
-  useEffect(() => {
-    //search next line of text & emit to temi
-    (() => {
-      if (currentLocation !== undefined) {
+  // useEffect(() => {
+  //   //search next line of text & emit to temi
+  //   (() => {
+  //     if (currentLocation !== undefined) {
         
-        let sentence =
-          currentLocation!.textList[
-            sentenceCounter
-          ]
+  //       let sentence =
+  //         currentLocation!.textList[
+  //           sentenceCounter
+  //         ]
 
           
-          if (sentence !== undefined ) {
-          console.log(sentenceCounter + ": " + sentence)
+  //         if (sentence !== undefined ) {
+  //         console.log(sentenceCounter + ": " + sentence)
           
-          // Pause the speech
-          if (sentence === "...") {
-            setTimeout(() => {
-              console.log("Waiting for a second")
-              setCurrentSentence("...");
-            }, 500)
-          } else {
-            socket.emit( "tts", sentence);
-            setCurrentSentence(sentence);
-          }
-          
-          // // Debugging
-          // setTimeout(() => {
-          //   setSentenceCounter(sentenceCounter + 1);
-          // }, 2000)
+  //         // Pause the speech
+  //         if (sentence === "...") {
+  //           setTimeout(() => {
+  //             console.log("Waiting for a second")
+  //             setCurrentSentence("...");
+  //           }, 500)
+  //         } else {
+  //           socket.emit( "tts", sentence);
+  //         }
+  //       } else {
 
-        } else {
+  //         setCurrentLocation(undefined);
+  //         setCurrentSentence("");
+  //       }
+  //     }
+  //   })();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [sentenceCounter]);
 
-          setCurrentLocation(undefined);
-          setCurrentSentence("");
-        }
-      }
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sentenceCounter]);
+  // useEffect(() => {
+  //   //shutdown
+  //   if (ShutdownCounter === 15) {
+  //     socket.emit("shutdown");
+  //   }
+  // }, [ShutdownCounter, socket]);
 
-  useEffect(() => {
-    //shutdown
-    if (ShutdownCounter === 15) {
-      socket.emit("shutdown");
-    }
-  }, [ShutdownCounter, socket]);
-
-  useEffect(() => {
-    // check if location is core ai iotinf smartxr nextweb
-    // to be able to go to each location and visit all choice modules
-    if (currentLocation !== undefined) {
-      if (
-        currentLocation.name === "core" ||
-        currentLocation.name === "ai" ||
-        currentLocation.name === "iotinf" ||
-        currentLocation.name === "smartxr" ||
-        currentLocation.name === "nextweb"
-      ) {
-        setIsAtCore(true);
-      } else {
-        setIsAtCore(false);
-      }
-    }
-  }, [currentLocation]);
+  // useEffect(() => {
+  //   // check if location is core ai iotinf smartxr nextweb
+  //   // to be able to go to each location and visit all choice modules
+  //   if (currentLocation !== undefined) {
+  //     if (
+  //       currentLocation.name === "core" ||
+  //       currentLocation.name === "ai" ||
+  //       currentLocation.name === "iotinf" ||
+  //       currentLocation.name === "smartxr" ||
+  //       currentLocation.name === "nextweb"
+  //     ) {
+  //       setIsAtCore(true);
+  //     } else {
+  //       setIsAtCore(false);
+  //     }
+  //   }
+  // }, [currentLocation]);
 
   // useEffect(() => {
   //   //reboot after 1 min of showing QR code in the end
@@ -240,6 +317,38 @@ function App() {
   //     }, 60000);
   //   }
   // }, [isLastPage, socket]);
+
+  //send temi to specific location
+  const sendLocation = (location: string, name: string) => {
+
+    setIsLastPage(false);
+    
+    // if (timer !== null) {
+    //   clearTimeout(timer);
+    // }
+
+    // // Reboot if needed
+    // let timeState = setTimeout(() => {
+    //   socket.emit("reboot", "yes");
+    // }, 600000);
+    // setTimer(timeState);
+
+    // Move the stepper one step further
+    if (stepperData.includes(name)) {
+      let index = stepperData.indexOf(name)
+      setStepperCounter(index);
+    }
+
+    console.log("Temi is moving to location", location)
+    socket.emit("tts", `Volgt u me maar!`)
+    // Make sure the robot actually moves to the location, then we will have to wait until he is there...
+    socket.emit("message", location);
+    // We will have to wait for the `temiMovementMessage` socket event to be received
+
+    // setTemiMovementData(location); // DEBUGGING
+  };
+
+  // #region App
 
   //styling for stepper
   const StepperConnector = styled(StepConnector)(({ theme }) => {
@@ -311,39 +420,16 @@ function App() {
     );
   }
 
-  //send temi to specific location
-  const sendLocation = (location: string, name: string) => {
-
-    setIsLastPage(false);
-    
-    if (timer !== null) {
-      clearTimeout(timer);
-    }
-
-    // Reboot if needed
-    let timeState = setTimeout(() => {
-      socket.emit("reboot", "yes");
-    }, 600000);
-    setTimer(timeState);
-
-    if (stepperData.includes(name)) {
-      let index = stepperData.indexOf(name)
-      setStepperCounter(index);
-    }
-    socket.emit("message", location);
-    setTemiMovementData(location); // DEBUGGING
-  };
-
 
   //fill drawer with locations from API
   const getList = () => (
     <Box
+      key="box"
       role="presentation"
       style={{ width: 250 }}
       onClick={() => setOpen(false)}
     >
-      {locationData!.map((item, index) => (
-        <>
+      {locationData.map((item, index) => (
           <ListItemButton
             key={index}
             tabIndex={index}
@@ -375,14 +461,12 @@ function App() {
               primary={item.name.split("-").join(" ")}
             />
           </ListItemButton>
-          <Divider />
-        </>
       ))}
-      <Divider />
-      <Divider />
-      <br />
+      <Divider key="divider-1" />
+      <Divider key="divider-2" />
+      <Divider key="divider-3" />
 
-      <ListItemButton onClick={handleOpen}>
+      <ListItemButton onClick={handleOpen} key="tutorial">
         <ListItemText
           key={locationData!.length + 1}
           tabIndex={locationData!.length + 1} 
@@ -438,11 +522,14 @@ function App() {
   //app html
   return (
     <>
-      <div className="">
+      <div key="main">
         <Drawer open={open} anchor={"left"} onClose={() => setOpen(false)}>
           {getList()}
         </Drawer>
-        <img src="/mctLogo.jpg" alt="mctLgo" className="lowerleft"></img>
+        <img src="/mctLogo.jpg" alt="mctLgo" className="lowerleft" 
+        // Uncomment this during debugging
+        // onClick={() => setSentenceCounter(sentenceCounter + 1)}
+        ></img>
 
         <div className="App">
           <Button id="HamburgerMenuButton" onClick={() => setOpen(true)}>
@@ -485,7 +572,7 @@ function App() {
               connector={<StepperConnector />}
             >
               {stepperData.map((label) => (
-                <Step key={label}>
+                <Step key={label} id={label}>
                   <StepLabel StepIconComponent={QontoStepIcon}>
                     {label.split('-').join(' ')}
                   </StepLabel>
@@ -517,7 +604,23 @@ function App() {
               </div>
               {/* <img src="/qr.jpg" id="qr" alt="mctLgo"></img> */}
             </>
-          ) : (
+          ) : ''}
+
+        { currentSentence !== "" ? (
+              <>
+              <Player
+              className='c-lottie'
+              autoplay={true}
+              loop={true}
+              controls={false}
+              keepLastFrame={true}
+              src={`${window.location.origin}/assets/lottie/loading.json`}
+              style={{ height: '22rem', width: '22rem', position: 'fixed', right: 0, bottom: 0 }}
+            ></Player>
+            </>
+            ) : '' }
+
+          { currentSentence === "" && !isLastPage ? (
             <>
               <div id="title">
                   <button className="hidden" id="cancelButton">
@@ -529,7 +632,7 @@ function App() {
                     id="GoToNextLocation"
                     onClick={() => {
                       if (stepperCounter < stepperData.length - 1) {
-                        console.log(stepperData[stepperCounter + 1])
+                        console.log(stepperCounter + ": " + stepperData[stepperCounter + 1])
                         sendLocation(
                           // Convert to the alias, which is the Temi location
                           nameToAlias(stepperData[stepperCounter + 1]),
@@ -548,13 +651,13 @@ function App() {
                   </button>
                 </div>
             </>
-          )}
+          ) : '' }
         </div>
         <div id="ttsDiv">
-          <p className="">{currentSentence}</p>
+          <p>{currentSentence}</p>
         </div>
       </div>
-      <div>
+      <div key="modal">
         <Modal
           open={openTutorial}
           onClose={handleClose}
@@ -574,6 +677,8 @@ function App() {
       </div>
     </>
   );
+
+  // #endregion
 }
 
 export default App;
