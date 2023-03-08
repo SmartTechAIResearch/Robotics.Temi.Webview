@@ -76,7 +76,7 @@ function App() {
   const [coreLocations, setCoreLocation] = useState<Array<string>>([
     "ai",
     "iotinf",
-    "smartxr",
+    "xrdev",
     "nextweb",
   ]);
   const [timer, setTimer] = useState<any>();
@@ -286,23 +286,23 @@ function App() {
   //   }
   // }, [ShutdownCounter, socket]);
 
-  // useEffect(() => {
-  //   // check if location is core ai iotinf smartxr nextweb
-  //   // to be able to go to each location and visit all choice modules
-  //   if (currentLocation !== undefined) {
-  //     if (
-  //       currentLocation.name === "core" ||
-  //       currentLocation.name === "ai" ||
-  //       currentLocation.name === "iotinf" ||
-  //       currentLocation.name === "smartxr" ||
-  //       currentLocation.name === "nextweb"
-  //     ) {
-  //       setIsAtCore(true);
-  //     } else {
-  //       setIsAtCore(false);
-  //     }
-  //   }
-  // }, [currentLocation]);
+  useEffect(() => {
+    // check if location is core ai iotinf xrdev nextweb
+    // to be able to go to each location and visit all choice modules
+    if (currentLocation !== undefined) {
+      if (
+        currentLocation.name === "core" ||
+        currentLocation.name === "ai" ||
+        currentLocation.name === "iotinf" ||
+        currentLocation.name === "xrdev" ||
+        currentLocation.name === "nextweb"
+      ) {
+        setIsAtCore(true);
+      } else {
+        setIsAtCore(false);
+      }
+    }
+  }, [currentLocation]);
 
   // useEffect(() => {
   //   //reboot after 1 min of showing QR code in the end
