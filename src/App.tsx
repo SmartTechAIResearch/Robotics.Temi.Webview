@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 // #region imports
 import { Player } from '@lottiefiles/react-lottie-player';
 import { useEffect, useState } from "react";
