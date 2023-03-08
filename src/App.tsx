@@ -54,7 +54,7 @@ const style = {
 
 function App() {
   // const steps = ["Reception", "1MCT", "The Core", "International"];
-  const socket = io("https://mctsockettemi.azurewebsites.net");
+  const socket = io("https://mcttemisocket.azurewebsites.net");
   const [stepperCounter, setStepperCounter] = useState(0);
   const [ShutdownCounter, setShutdownCounter] = useState(0);
   const [sentenceCounter, setSentenceCounter] = useState(-1);
@@ -72,15 +72,15 @@ function App() {
   const [temiMovementData, setTemiMovementData] = useState<string>("");
   const [currentSentence, setCurrentSentence] = useState<string>("");
   
-  // const [isAtCore, setIsAtCore] = useState<boolean>(false);
-  // const [coreLocations, setCoreLocation] = useState<Array<string>>([
-  //   "ai",
-  //   "iotinf",
-  //   "smartxr",
-  //   "nextweb",
-  // ]);
-  // const [timer, setTimer] = useState<any>();
-  // const [showInternational, setShowInternational] = useState<boolean>(false);
+  const [isAtCore, setIsAtCore] = useState<boolean>(false);
+  const [coreLocations, setCoreLocation] = useState<Array<string>>([
+    "ai",
+    "iotinf",
+    "smartxr",
+    "nextweb",
+  ]);
+  const [timer, setTimer] = useState<any>();
+  const [showInternational, setShowInternational] = useState<boolean>(false);
   
   const handleOpen = () => setOpenTutorial(true);
   const handleClose = () => setOpenTutorial(false);
@@ -157,7 +157,7 @@ function App() {
   useEffect(() => {
     //#region Fetch the default information
     //API call to get location information
-    let stepperURL = "https://mcttemitourdatabase.azurewebsites.net/api/stepper/UZ-Gent";
+    let stepperURL = "https://temiapi.azurewebsites.net/api/stepper/Howest MCT";
     let optionsURL: RequestInit = {
       method: "GET",
       headers: {
@@ -176,7 +176,7 @@ function App() {
       });
 
     let url =
-      "https://mcttemitourdatabase.azurewebsites.net/api/locations/UZ-Gent";
+      "https://temiapi.azurewebsites.net/api/locations/Howest MCT";
     let options: RequestInit = {
       method: "GET",
       headers: {

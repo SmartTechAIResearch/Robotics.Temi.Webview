@@ -34,7 +34,7 @@ export function Admin() {
   const [socket, setSocket] = useState<Socket>();
   useEffect(() => {
     let url =
-      "https://mcttemitourdatabase.azurewebsites.net/api/locations/getLocations";
+      "https://temiapi.azurewebsites.net/api/locations/getLocations";
     let options: RequestInit = {
       method: "GET",
       headers: {
@@ -52,7 +52,7 @@ export function Admin() {
         console.log(data);
         setLocationData(data);
       });
-    setSocket(io("https://mctsockettemi.azurewebsites.net"));
+    setSocket(io("https://mcttemisocket.azurewebsites.net"));
   }, []);
 
   const sendTTS = () => {
@@ -60,7 +60,7 @@ export function Admin() {
   };
 
   const addLocation = () => {
-    let stepperURL = "https://mcttemitourdatabase.azurewebsites.net/api/add/location";
+    let stepperURL = "https://temiapi.azurewebsites.net/api/add/location";
     let optionsURL: RequestInit = {
       method: "POST",
       headers: {
