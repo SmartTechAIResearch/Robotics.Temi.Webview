@@ -174,11 +174,11 @@ function App() {
         }
       })
       .then((data) => {
-        setStepperData(data.stepsList);
+        setStepperData(data[0].stepsList);
       });
 
     let url =
-      "https://temiapi.azurewebsites.net/api/locations/Howest MCT";
+      "https://temiapi.azurewebsites.net/api/locations/getByRegion/Howest MCT";
     let options: RequestInit = {
       method: "GET",
       headers: {
@@ -193,6 +193,7 @@ function App() {
         }
       })
       .then((data) => {
+        console.log("SetLocationData: ", data);
         setLocationData(data);
       });
 

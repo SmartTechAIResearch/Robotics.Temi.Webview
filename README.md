@@ -11,7 +11,7 @@
   - [parameters](#parameters)
 ## Requirements
 
-- Node 16.14.0 or higher with NPM.
+- Node 18.15.0 or higher with NPM.
 
 ## Installation: Local Development server
 Downloading the repository
