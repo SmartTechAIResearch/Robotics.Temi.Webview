@@ -759,7 +759,7 @@ function App() {
           ) : '' }
         </div>
         <div id="ttsDiv">
-          <p>{subtitleHistory[sentenceCounter - 1]}</p>
+          <p>{currentSentence}</p>
         </div>
       </div>
       <div key="modal">
