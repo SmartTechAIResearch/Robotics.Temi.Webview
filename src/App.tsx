@@ -57,6 +57,8 @@ const style = {
 function App() {
   // const steps = ["Reception", "1MCT", "The Core", "International"];
   const socket = io("https://mcttemisocket.azurewebsites.net");
+  const api = "https://temiapi.azurewebsites.net";
+  const tour = "Howest MCT";
   const [stepperCounter, setStepperCounter] = useState(0);
   const [ShutdownCounter, setShutdownCounter] = useState(0);
   const [sentenceCounter, setSentenceCounter] = useState(-1);
@@ -73,10 +75,11 @@ function App() {
   const [currentLocation, setCurrentLocation] = useState<iLocationData>();
   const [temiMovementData, setTemiMovementData] = useState<string>("");
   const [currentSentence, setCurrentSentence] = useState<string>("");
+  const [subtitleHistory, setSubtitleHistory] = useState<Array<string>>([]);
   
   const [isAtCore, setIsAtCore] = useState<boolean>(false);
   const [coreLocations, setCoreLocation] = useState<Array<string>>([
-    "ai",
+    "aiengineer",
     "infra",
     "xrdev",
     "nextweb",
@@ -91,11 +94,15 @@ function App() {
   const test = () => {
     console.log(sentenceCounter, temiMovementData, currentLocation);
   
+    // Start the counter from 0 and up
     if (sentenceCounter >= 0) {
+      // If we have any locations, we continue
       if (locationData.length > 0) {
         if (currentLocation) {
+          // Get the sentence Temi should speak
           let sentence = currentLocation.textList[sentenceCounter]
           if (sentence) {
+            // Send the sentence to Temi, we then await the response to show the subtitles
             socket.emit("tts", sentence)
           }
         }
@@ -108,6 +115,7 @@ function App() {
     setCurrentLocation(loc[loc.length - 1]);
 
     if (temiMovementData !== "") {
+      setSubtitleHistory([]); // Clear the history of subtitles
       setStartSpeaking(true);
       setSentenceCounter(0);
     }
@@ -162,7 +170,7 @@ function App() {
   useEffect(() => {
     //#region Fetch the default information
     //API call to get location information
-    let stepperURL = "https://temiapi.azurewebsites.net/api/stepper/Howest MCT";
+    let stepperURL = `${api}/api/stepper/${tour}`;
     let optionsURL: RequestInit = {
       method: "GET",
       headers: {
@@ -180,8 +188,7 @@ function App() {
         setStepperData(data[0].stepsList);
       });
 
-    let url =
-      "https://temiapi.azurewebsites.net/api/locations/getByRegion/Howest MCT";
+    let url = `${api}/api/locations/getByRegion/${tour}`;
     let options: RequestInit = {
       method: "GET",
       headers: {
@@ -216,6 +223,7 @@ function App() {
     socket.on("ttsMessage", (data) => {
       // TODO: Make sure the subtitles move asynchronously from the TTS
       setCurrentSentence(data.ttsMessage)
+      subtitleHistory.push(data.ttsMessage);
     });
 
     socket.on("temiTtsMessage", (data) => {
@@ -322,12 +330,12 @@ function App() {
   // }, [ShutdownCounter, socket]);
 
   useEffect(() => {
-    // check if location is core ai iotinf xrdev nextweb
+    // check if location is core ai infra xrdev nextweb
     // to be able to go to each location and visit all choice modules
     if (currentLocation !== undefined) {
       if (
         currentLocation.alias === "core" ||
-        currentLocation.alias === "ai" ||
+        currentLocation.alias === "aiengineer" ||
         currentLocation.alias === "infra" ||
         currentLocation.alias === "xrdev" ||
         currentLocation.alias === "nextweb" ||
@@ -338,6 +346,7 @@ function App() {
         setIsAtCore(false);
       }
     }
+    setIsAtCore(false);
   }, [currentLocation]);
 
   // useEffect(() => {
@@ -750,7 +759,7 @@ function App() {
           ) : '' }
         </div>
         <div id="ttsDiv">
-          <p>{currentSentence}</p>
+          <p>{subtitleHistory[sentenceCounter - 1]}</p>
         </div>
       </div>
       <div key="modal">
