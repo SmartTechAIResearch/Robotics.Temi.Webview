@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
 
 // #region imports
 import { Player } from '@lottiefiles/react-lottie-player';
