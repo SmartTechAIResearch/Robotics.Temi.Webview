@@ -346,8 +346,6 @@ function App() {
       } else {
         setIsAtCore(false);
       }
-    } else {
-      setIsAtCore(false);
     }
   }, [currentLocation]);
 
