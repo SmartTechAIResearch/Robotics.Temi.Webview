@@ -77,7 +77,7 @@ function App() {
   const [isAtCore, setIsAtCore] = useState<boolean>(false);
   const [coreLocations, setCoreLocation] = useState<Array<string>>([
     "ai",
-    "iotinf",
+    "infra",
     "xrdev",
     "nextweb",
     "creativetech"
@@ -326,11 +326,12 @@ function App() {
     // to be able to go to each location and visit all choice modules
     if (currentLocation !== undefined) {
       if (
-        currentLocation.name === "core" ||
-        currentLocation.name === "ai" ||
-        currentLocation.name === "iotinf" ||
-        currentLocation.name === "xrdev" ||
-        currentLocation.name === "nextweb"
+        currentLocation.alias === "core" ||
+        currentLocation.alias === "ai" ||
+        currentLocation.alias === "infra" ||
+        currentLocation.alias === "xrdev" ||
+        currentLocation.alias === "nextweb" ||
+        currentLocation.alias === "creativetech"
       ) {
         setIsAtCore(true);
       } else {
