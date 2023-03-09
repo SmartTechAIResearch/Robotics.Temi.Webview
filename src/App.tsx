@@ -80,6 +80,7 @@ function App() {
     "iotinf",
     "xrdev",
     "nextweb",
+    "creativetech"
   ]);
   const [timer, setTimer] = useState<any>();
   const [showInternational, setShowInternational] = useState<boolean>(false);
@@ -141,7 +142,9 @@ function App() {
     if (nextMessage) {
       console.log("Showing next message!")
       if (currentLocation) {
-        if (sentenceCounter < currentLocation.textList.length -1) {
+        if (sentenceCounter < currentLocation.textList.length - 1) {
+          console.log("Current Sentence: ", currentSentence);
+          console.log("Current Sentence Counter: ", currentSentence);
           setSentenceCounter(sentenceCounter + 1);
         } else {
           setCurrentSentence("");
@@ -235,6 +238,35 @@ function App() {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    const handleKeyPress = (event) => {
+      // Call the setTemiMovementData method with a parameter when the 't' key is pressed
+      if (event.key === "n") {
+        console.log("Debugging")
+        setStepperCounter(stepperCounter + 1);
+      }
+      else if (event.key === "c") {
+        let location = nameToAlias(stepperData[stepperCounter]);
+        console.log("Finish: ", location)
+        setTemiMovementData(location)
+      }
+      else if (event.key === "s") {
+        setNextMessage(true);
+      }
+      else if (event.key === "d") {
+        setIsAtCore(true);
+      }
+    };
+
+    // Attach the handleKeyPress function to the document's keypress event
+    document.addEventListener("keypress", handleKeyPress);
+
+    return () => {
+      // Remove the handleKeyPress function from the document's keypress event
+      document.removeEventListener("keypress", handleKeyPress);
+    };
+  }, [stepperCounter, stepperData]);
 
   // useEffect(() => {
   //   //search correct text and emit to temi TTS
@@ -476,11 +508,11 @@ function App() {
   );
 
   // //convert alias to location name
-  // const aliasToName = (alias: any) => {
-  //   for (let location of locationData) {
-  //     if (location.alias === alias) return location.name;
-  //   }
-  // };
+  const aliasToName = (alias: any) => {
+    for (let location of locationData) {
+      if (location.alias === alias) return location.name;
+    }
+  };
   //convert location name to alias
   const nameToAlias = (name: any) => {
     for (let location of locationData) {
@@ -604,6 +636,68 @@ function App() {
             </>
           ) : ''}
 
+    {isAtCore ? (
+                <>
+                  {showInternational ? (
+                    <>
+                      <button className="hidden" id="cancelButton">
+                        <CancelIcon
+                          sx={{ fontSize: 100, color: red[500] }}
+                        ></CancelIcon>
+                      </button>
+                      <button
+                        id="GoToNextLocation"
+                        onClick={() => {
+                          setStepperCounter(stepperCounter + 1);
+                          if (stepperCounter < stepperData.length - 1) {
+                            let name = stepperData[stepperCounter + 1]
+                            let alias = nameToAlias(name);
+                            sendLocation(
+                              // Convert to the alias, which is the Temi location
+                              alias,
+                              name
+                            );
+                          } else {
+                            setIsLastPage(true);
+                            socket.emit("message", "finish");
+                          }
+                        }}
+                      >
+                        Go to{" "}
+                        {stepperCounter >= stepperData.length - 1
+                          ? "finish"
+                          : stepperData[stepperCounter + 1]}
+                      </button>
+                    </>
+                  ) : (
+                    <div className="multipleOptions">
+                      {coreLocations.map((alias) => (
+                        <button
+                          id="GoToNextLocation"
+                          onClick={() => {
+                            console.log(coreLocations);
+                            if (coreLocations.length === 1) {
+                              let name = aliasToName(alias)
+                              sendLocation(alias, name);
+                              setShowInternational(true);
+                            } else {
+                              setCoreLocation(
+                                coreLocations.filter((e) => e !== alias)
+                              ); // Remove the one you just selected
+                                
+                              let name = aliasToName(alias)
+                              sendLocation(alias, name);
+                            }
+                          }}
+                        >
+                          Ga naar {" " + aliasToName(alias)}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </>
+              ) : ( "" ) } 
+
         { currentSentence !== "" ? (
               <>
               <Player
@@ -630,11 +724,14 @@ function App() {
                     id="GoToNextLocation"
                     onClick={() => {
                       if (stepperCounter < stepperData.length - 1) {
+                        let name = stepperData[stepperCounter + 1]
+                        let alias = nameToAlias(name);
+                        
                         console.log(stepperCounter + ": " + stepperData[stepperCounter + 1])
                         sendLocation(
                           // Convert to the alias, which is the Temi location
-                          nameToAlias(stepperData[stepperCounter + 1]),
-                          stepperData[stepperCounter + 1]
+                          alias,
+                          name
                         );
                       } else {
                         setIsLastPage(true);
