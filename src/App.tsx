@@ -153,7 +153,7 @@ function App() {
       if (currentLocation) {
         if (sentenceCounter < currentLocation.textList.length - 1) {
           console.log("Current Sentence: ", currentSentence);
-          console.log("Current Sentence Counter: ", currentSentence);
+          console.log("Current Sentence Counter: ", sentenceCounter);
           setSentenceCounter(sentenceCounter + 1);
         } else {
           setCurrentSentence("");
@@ -346,8 +346,9 @@ function App() {
       } else {
         setIsAtCore(false);
       }
+    } else {
+      setIsAtCore(false);
     }
-    setIsAtCore(false);
   }, [currentLocation]);
 
   // useEffect(() => {
