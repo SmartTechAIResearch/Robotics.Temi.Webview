@@ -71,6 +71,8 @@ function App() {
   const api = "https://temiapi.azurewebsites.net";
   // Fetch the tour from the queryString property "?tour="
   const tour = query.get("tour") ?? "Howest MCT";
+  console.log("Tour:", tour);
+  console.log("Socket:", socketUrl);
   const [stepperCounter, setStepperCounter] = useState(0);
   const [ShutdownCounter, setShutdownCounter] = useState(0);
   const [sentenceCounter, setSentenceCounter] = useState(-1);
