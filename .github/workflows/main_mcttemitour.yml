@@ -27,14 +27,11 @@ jobs:
           npm run build --if-present
           npm run test --if-present
 
-      - run: |
-          zip -r node-app.zip .
-
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
           name: node-app
-          path: node-app.zip
+          path: .
 
   deploy:
     runs-on: ubuntu-latest
@@ -48,9 +45,6 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: node-app
-      - run: |
-          unzip node-app.zip
-          rm node-app.zip
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
@@ -58,5 +52,5 @@ jobs:
         with:
           app-name: 'MCTTemiTour'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_A522738D5EF549E0A3A2958C2CF30093 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F2BD7A26DA8D4B7994C684B9524F92FD }}
           package: .
