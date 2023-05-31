@@ -52,5 +52,5 @@ jobs:
         with:
           app-name: 'MCTTemiTour'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_FBBAFF242745494798EA87C93CD0E1E1 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_A522738D5EF549E0A3A2958C2CF30093 }}
           package: .
