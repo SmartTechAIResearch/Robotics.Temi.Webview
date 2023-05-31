@@ -71,8 +71,8 @@ function App() {
   const api = "https://temiapi.azurewebsites.net";
   // Fetch the tour from the queryString property "?tour="
   const tour = query.get("tour") ?? "Howest MCT";
-  console.log("Tour:", tour);
-  console.log("Socket:", socketUrl);
+  console.debug("Tour:", tour);
+  console.debug("Socket:", socketUrl);
   const [stepperCounter, setStepperCounter] = useState(0);
   const [ShutdownCounter, setShutdownCounter] = useState(0);
   const [sentenceCounter, setSentenceCounter] = useState(-1);
@@ -167,7 +167,6 @@ function App() {
         if (sentenceCounter < currentLocation.textList.length - 1) {
           console.log("Current Sentence: ", currentSentence);
           console.log("Current Sentence Counter: ", sentenceCounter);
-          setSentenceCounter(sentenceCounter + 1);
         } else {
           setCurrentSentence("");
           setSentenceCounter(-1);
@@ -176,6 +175,12 @@ function App() {
         }
       }
       setNextMessage(false);
+      // use a Timeout to wait for the next message
+      setTimeout(() => {
+        setSentenceCounter(sentenceCounter + 1);
+        console.log("Next message will be shown in 10 seconds!");
+      }, 10000);
+
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nextMessage])
@@ -392,10 +397,12 @@ function App() {
       setStepperCounter(index);
     }
 
-    console.log(locationData)
-    console.log(name)
+    console.log("locationData: ", locationData)
+    console.log("Name: ", name)
 
-    const LocationObj = locationData.filter(loc => loc.alias === name)[0];
+    const LocationObj = locationData.filter(loc => loc.name === name)[0];
+
+    console.log(LocationObj);
 
     if (LocationObj.move) {
       console.log("Temi is moving to location", location)
