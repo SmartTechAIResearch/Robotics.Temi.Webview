@@ -1,0 +1,50 @@
+{
+    "name": "nextweb",
+    "alias": "Next Web Developer",
+    "icon": "ForumIcon",
+    "textList": [
+        "Bekijk hier de projecten van de studenten uit het keuzetraject Next Web Developer.",
+        "Als je klaar bent, klik dan door naar een volgend traject waar je info over wil horen."
+    ],
+    "region": "Howest MCT"
+},
+{
+    "name": "AI Engineer",
+    "alias": "aiengineer",
+    "icon": "ForumIcon",
+    "textList": [
+        "Bekijk hier de projecten van de studenten uit het keuzetraject AI Engineer.",
+        "Als je klaar bent, klik dan door naar een volgend traject waar je info over wil horen."
+    ],
+    "region": "Howest MCT"
+},
+{
+    "name": "XR Developer",
+    "alias": "xrdev",
+    "icon": "ForumIcon",
+    "textList": [
+        "Bekijk hier de projecten van de studenten uit het keuzetraject XR Developer.",
+        "Als je klaar bent, klik dan door naar een volgend traject waar je info over wil horen."
+    ],
+    "region": "Howest MCT"
+},
+{
+    "name": "IoT Infrastructure Engineer",
+    "alias": "infra",
+    "icon": "ForumIcon",
+    "textList": [
+        "Bekijk hier de projecten van de studenten uit het keuzetraject IoT Infrastructure Engineer.",
+        "Als je klaar bent, klik dan door naar een volgend traject waar je info over wil horen."
+    ],
+    "region": "Howest MCT"
+},
+{
+    "name": "Creative Tech & AI",
+    "alias": "creativetech",
+    "icon": "ForumIcon",
+    "textList": [
+        "Vraag hier naar meer uitleg over onze Engelstalige bachelor van Creative Tech en AI.",
+        "Als je klaar bent, klik dan door naar een volgend traject waar je info over wil horen."
+    ],
+    "region": "Howest MCT"
+}

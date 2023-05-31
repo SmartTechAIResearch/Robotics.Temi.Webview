@@ -10,6 +10,7 @@ import { io } from "socket.io-client";
 import { Menu, Wifi, WifiOff } from "@mui/icons-material";
 import { blue, lightBlue, red } from "@mui/material/colors";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import { useLocation } from "react-router-dom";
 import {
   FormControlLabel,
   Modal,
@@ -57,9 +58,19 @@ const style = {
 
 function App() {
   // const steps = ["Reception", "1MCT", "The Core", "International"];
-  const socket = io("https://mcttemisocket.azurewebsites.net");
+  const query = new URLSearchParams(useLocation().search);
+  const socketVersion = query.get("socket") ?? "";
+  // If socketVersion is specified, use a different Socket URL
+  let socketUrl: string;
+  if (socketVersion !== "") {
+    socketUrl = "https://mcttemitour" + socketVersion + ".azurewebsites.net";
+  } else {
+    socketUrl = "https://mcttemisocket.azurewebsites.net";
+  }
+  const socket = io(socketUrl);
   const api = "https://temiapi.azurewebsites.net";
-  const tour = "Howest MCT";
+  // Fetch the tour from the queryString property "?tour="
+  const tour = query.get("tour") ?? "Howest MCT";
   const [stepperCounter, setStepperCounter] = useState(0);
   const [ShutdownCounter, setShutdownCounter] = useState(0);
   const [sentenceCounter, setSentenceCounter] = useState(-1);
@@ -379,11 +390,23 @@ function App() {
       setStepperCounter(index);
     }
 
-    console.log("Temi is moving to location", location)
-    socket.emit("tts", `Volgt u me maar!`)
-    // Make sure the robot actually moves to the location, then we will have to wait until he is there...
-    socket.emit("message", location);
-    // We will have to wait for the `temiMovementMessage` socket event to be received
+    console.log(locationData)
+    console.log(name)
+
+    const LocationObj = locationData.filter(loc => loc.alias === name)[0];
+
+    if (LocationObj.move) {
+      console.log("Temi is moving to location", location)
+      socket.emit("tts", `Volgt u me maar!`)
+      // Make sure the robot actually moves to the location, then we will have to wait until he is there...
+      socket.emit("message", location);
+      // We will have to wait for the `temiMovementMessage` socket event to be received
+    } else {
+      setTemiMovementData(location); 
+    }
+
+   
+
 
     // setTemiMovementData(location); // DEBUGGING
   };
@@ -733,11 +756,23 @@ function App() {
                   <button
                     id="GoToNextLocation"
                     onClick={() => {
+                      console.log("stepperCounter: ", stepperCounter);
+                      console.log("StepperData ", stepperData);
                       if (stepperCounter < stepperData.length - 1) {
                         let name = stepperData[stepperCounter + 1]
                         let alias = nameToAlias(name);
                         
                         console.log(stepperCounter + ": " + stepperData[stepperCounter + 1])
+                        sendLocation(
+                          // Convert to the alias, which is the Temi location
+                          alias,
+                          name
+                        );
+                      } else if (stepperData.length === 1) {
+                        let name = stepperData[0]
+                        let alias = nameToAlias(name);
+                        
+                        console.log(stepperCounter + ": " + name)
                         sendLocation(
                           // Convert to the alias, which is the Temi location
                           alias,
@@ -749,10 +784,15 @@ function App() {
                       }
                     }}
                   >
-                    Ga naar {" "}
-                    {stepperCounter >= stepperData.length - 1
-                      ? "einde"
-                      : stepperData[stepperCounter + 1].split('-').join(" ")}
+                    {
+                    stepperData.length === 1
+                    ? "Welkom in " + stepperData[0]
+                    :
+                      stepperCounter >= stepperData.length - 1
+                        ? "Ga naar einde"
+                        : "Ga naar " + stepperData[stepperCounter + 1].split('-').join(" ")
+                        
+                    }
                   </button>
                 </div>
             </>

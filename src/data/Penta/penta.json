@@ -1,0 +1,85 @@
+[
+    {
+        "name": "enterprise",
+        "alias": "The Enterprise",
+        "icon": "ForumIcon",
+        "textList": [
+            "The Enterprise is vandaag onze Hotspot. Hier kan je een heleboel afdelingen van Howest samen zien.",
+            "Een aantal onderzoeksgroepen, zoals het 5G-Lab en een onderzoeksgroep van de dienst Ergotherapie staan hier opgesteld.",
+            "Heb je vragen? Dan zullen mijn menselijke collega's je heel graag helpen!",
+            "Kom straks gerust bij me langs als ik je nog ergens mee kan helpen. Steeds tot uw dienst."
+        ],
+        "region": "Howest Penta -1 2",
+        "move": true
+    },
+    {
+        "name": "5G",
+        "alias": "5G Lab",
+        "icon": "ForumIcon",
+        "textList": [
+            "Welkom. Je bevindt je momenteel aan The Enterprise, een co-creatie hub van Howest.",
+            "Vanuit de opleiding Multimedia en Creatieve Technologie werken we graag samen met het werkveld.",
+            "Heb je vragen? Dan zullen mijn menselijke collega's je heel graag helpen!",
+            "Kom straks gerust bij mij of mijn broertje langs als ik je nog ergens mee kan helpen. Steeds tot uw dienst."
+        ],
+        "region": "Howest Penta -1 1",
+        "move": false
+    },
+    {
+        "name": "plaza",
+        "alias": "The Plaza",
+        "icon": "RestaurantIcon",
+        "textList": [
+            "In The Plaza houdt Howest af en toe een event. Een personeelsfeestje, een vergadering, een conferentie, noem maar op. Het kan allemaal.",
+            "Overdag zie je hier vaak studenten eten en werken aan projecten, studeren of gewoon babbelen."
+        ],
+        "region": "Howest Penta -1 2",
+        "move": true
+    },
+    {
+        "name": "elevator",
+        "alias": "Elevator",
+        "icon": "ElevatorIcon",
+        "textList": [
+            "Bezoek je graag ook de andere verdiepen van dit gebouw? Dan kan je hier gebruik maken van de lift."
+        ],
+        "region": "Howest Penta -1 2",
+        "move": true
+    },
+    {
+        "name": "home",
+        "alias": "Home Base",
+        "icon": "ForumIcon",
+        "textList": [
+        ],
+        "region": "Howest Penta -1 1",
+        "move": true
+    },
+    {
+        "name": "start",
+        "alias": "Start",
+        "icon": "StairsIcon",
+        "textList": [
+        ],
+        "region": "Howest Penta -1 1",
+        "move": true
+    },
+    {
+        "name": "home",
+        "alias": "Home Base",
+        "icon": "ForumIcon",
+        "textList": [
+        ],
+        "region": "Howest Penta -1 2",
+        "move": true
+    },
+    {
+        "name": "start",
+        "alias": "Start",
+        "icon": "StairsIcon",
+        "textList": [
+        ],
+        "region": "Howest Penta -1 2",
+        "move": true
+    }
+]

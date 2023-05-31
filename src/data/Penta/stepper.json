@@ -1,0 +1,15 @@
+{
+    "stepsList": [
+        "The Plaza",
+        "The Enterprise",
+        "Elevator"
+    ],
+    "region": "Howest Penta -1 2"
+},
+
+{
+    "stepsList": [
+        "The Enterprise",
+    ],
+    "region": "Howest Penta -1 1"
+}

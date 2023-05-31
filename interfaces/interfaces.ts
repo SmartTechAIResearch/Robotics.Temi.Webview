@@ -5,6 +5,7 @@ export interface iLocationData {
   textList: Array<string>;
   icon: string;
   region: string;
+  move: boolean;
 }
 
 export interface iTtsMessage {
