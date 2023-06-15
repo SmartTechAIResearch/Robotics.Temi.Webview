@@ -42,9 +42,12 @@ import {
   ListItemButton,
   ListItemText,
 } from "@mui/material";
-import EmbedWebsite from './components/embedwebsite';
-import EmbedImage from './components/embedImage';
-import ShutdownImage from './components/shutdownImage';
+import { EmbedWebsite, EmbedImage, InteractableImage } from './components'
+
+import { SocketProvider } from './SocketContext';
+import { useAppConfig } from './hooks/useAppConfig';
+
+
 const style = {
   position: "absolute" as "absolute",
   top: "50%",
@@ -60,6 +63,7 @@ const style = {
 //#endregion
 
 function App() {
+  console.log('App rendered');
   // const steps = ["Reception", "1MCT", "The Core", "International"];
   const query = new URLSearchParams(useLocation().search);
   const socketVersion = query.get("socket") ?? "";
@@ -71,12 +75,19 @@ function App() {
     socketUrl = "https://mcttemisocket.azurewebsites.net";
   }
   const socket = io(socketUrl);
-  const api = "https://temiapi.azurewebsites.net";
-  // const api = "http://localhost:3001";
+  // const api = "https://temiapi.azurewebsites.net";
+  const api = "http://localhost:3001";
   // Fetch the tour from the queryString property "?tour="
   const tour = query.get("tour") ?? "Howest MCT";
   console.debug("Tour:", tour);
   console.debug("Socket:", socketUrl);
+
+  const [config, saveConfig] = useAppConfig();
+
+  useEffect(() => {
+    console.log("The saved config is:", config)
+  }, [config])
+
 
   const debugMode = false; // Don't forget to toggle this to false!!
 
@@ -98,7 +109,7 @@ function App() {
   const [temiMovementData, setTemiMovementData] = useState<string>("");
   const [currentSentence, setCurrentSentence] = useState<string>("");
   const [subtitleHistory, setSubtitleHistory] = useState<Array<string>>([]);
-  
+
   const [isAtCore, setIsAtCore] = useState<boolean>(false);
   const [coreLocations, setCoreLocation] = useState<Array<string>>([
     "aiengineer",
@@ -109,7 +120,7 @@ function App() {
   ]);
   const [timer, setTimer] = useState<any>();
   const [showInternational, setShowInternational] = useState<boolean>(false);
-  
+
   const handleOpen = () => setOpenTutorial(true);
   const handleClose = () => setOpenTutorial(false);
 
@@ -126,7 +137,7 @@ function App() {
   const closeImagePopup = () => {
     setShowImagePopup(false);
   }
-  
+
 
   const handleFinish = () => {
     console.log(`We are finished with the location "${currentLocation.name}" we can do something else now ...`);
@@ -140,23 +151,23 @@ function App() {
     let data: NextStepImpl;
 
     switch (currentLocation.onNextStep.type) {
-        case NextStep.EMBED:
-          data = currentLocation.onNextStep;
-          console.log("The website we will embed now is: " + (data as EmbedNextStep).url);
-          setIframeUrl((data as EmbedNextStep).url);
-          setShowIframe(true);
-          break;
-        case NextStep.IMAGE:
-          data = currentLocation.onNextStep;
-          setImagePath("assets/images/" + (data as ImageNextStep).url);
-          setShowImagePopup(true);
-          break;
-        case NextStep.NESTED:
-          console.log("We should show a new page of nested items next...");
-          break;
-        default:
-          console.log("Not doing anything now ...");
-          break;
+      case NextStep.EMBED:
+        data = currentLocation.onNextStep;
+        console.log("The website we will embed now is: " + (data as EmbedNextStep).url);
+        setIframeUrl((data as EmbedNextStep).url);
+        setShowIframe(true);
+        break;
+      case NextStep.IMAGE:
+        data = currentLocation.onNextStep;
+        setImagePath("assets/images/" + (data as ImageNextStep).url);
+        setShowImagePopup(true);
+        break;
+      case NextStep.NESTED:
+        console.log("We should show a new page of nested items next...");
+        break;
+      default:
+        console.log("Not doing anything now ...");
+        break;
     }
 
 
@@ -164,7 +175,7 @@ function App() {
 
 
   const sendSentenceToTemi = () => {
-    
+
     // Start the counter from 0 and up
     if (sentenceCounter >= 0) {
       console.log("Sending sentence to Temi: ", sentenceCounter, temiMovementData, currentLocation);
@@ -200,13 +211,13 @@ function App() {
       setSentenceCounter(0);
     }
     // Start speaking by setting the SentenceCounter to 0
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [temiMovementData]);
-  
+
   // When Temi should start speaking
   useEffect(() => {
     sendSentenceToTemi();
-    
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sentenceCounter, startSpeaking]);
 
@@ -220,7 +231,7 @@ function App() {
           console.log("Current Sentence Counter: ", sentenceCounter);
         } else {
           console.log("We are finished speaking at: ", Date.now());
-          
+
           // If there is a website to be rendered here, we will show it.
           handleFinish();
 
@@ -239,7 +250,7 @@ function App() {
       }, timeout);
 
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nextMessage])
 
   //  the default information and get the socket connection on!
@@ -283,7 +294,7 @@ function App() {
         setLocationData(data);
       });
 
-      //#endregion
+    //#endregion
 
     //connction with socket true
     socket.on("connect", () => {
@@ -312,7 +323,7 @@ function App() {
     socket.on("temiMovementMessage", (data) => {
       // First line
       if (data.movementMessage["status"] === "complete") {
-        setTemiMovementData(data.movementMessage["location"]); 
+        setTemiMovementData(data.movementMessage["location"]);
       }
     });
 
@@ -343,13 +354,13 @@ function App() {
       }
     };
 
-    // Attach the handleKeyPress function to the document's keypress event
-    document.addEventListener("keypress", handleKeyPress);
+    // // Attach the handleKeyPress function to the document's keypress event
+    // document.addEventListener("keypress", handleKeyPress);
 
-    return () => {
-      // Remove the handleKeyPress function from the document's keypress event
-      document.removeEventListener("keypress", handleKeyPress);
-    };
+    // return () => {
+    //   // Remove the handleKeyPress function from the document's keypress event
+    //   document.removeEventListener("keypress", handleKeyPress);
+    // };
   }, [stepperCounter, stepperData]);
 
   useEffect(() => {
@@ -384,7 +395,7 @@ function App() {
   const sendLocation = (location: string, name: string) => {
 
     setIsLastPage(false);
-    
+
     // if (timer !== null) {
     //   clearTimeout(timer);
     // }
@@ -415,10 +426,10 @@ function App() {
       // We will have to wait for the `temiMovementMessage` socket event to be received
     } else {
       console.log("Temi doesn't have to move, because he's stationary");
-      setTemiMovementData(location); 
+      setTemiMovementData(location);
     }
 
-   
+
 
 
     // setTemiMovementData(location); // DEBUGGING
@@ -506,37 +517,37 @@ function App() {
       onClick={() => setOpen(false)}
     >
       {locationData.map((item, index) => (
-          <ListItemButton
-            key={index}
-            tabIndex={index}
-            onClick={(event) => {
-              setIsLastPage(false);
-              sendLocation(item.alias, item.name);
-            }}
-          >
-            {
-              <SvgIcon
-                className="svgClass"
-                component={
-                  item.icon === "AccountBalanceIcon"
-                    ? AccountBalanceIcon
-                    : item.icon === "ForumIcon"
+        <ListItemButton
+          key={index}
+          tabIndex={index}
+          onClick={(event) => {
+            setIsLastPage(false);
+            sendLocation(item.alias, item.name);
+          }}
+        >
+          {
+            <SvgIcon
+              className="svgClass"
+              component={
+                item.icon === "AccountBalanceIcon"
+                  ? AccountBalanceIcon
+                  : item.icon === "ForumIcon"
                     ? ForumIcon
                     : item.icon === "WcIcon"
-                    ? WcIcon
-                    : item.icon === "ElevatorIcon"
-                    ? ElevatorIcon
-                    : item.icon === "PowerIcon"
-                    ? PowerIcon
-                    : CancelIcon
-                }
-              ></SvgIcon>
-            }
-            <ListItemText
-              primaryTypographyProps={{ fontSize: "20px" }}
-              primary={item.name.split("-").join(" ")}
-            />
-          </ListItemButton>
+                      ? WcIcon
+                      : item.icon === "ElevatorIcon"
+                        ? ElevatorIcon
+                        : item.icon === "PowerIcon"
+                          ? PowerIcon
+                          : CancelIcon
+              }
+            ></SvgIcon>
+          }
+          <ListItemText
+            primaryTypographyProps={{ fontSize: "20px" }}
+            primary={item.name.split("-").join(" ")}
+          />
+        </ListItemButton>
       ))}
       <Divider key="divider-1" />
       <Divider key="divider-2" />
@@ -545,7 +556,7 @@ function App() {
       <ListItemButton onClick={handleOpen} key="tutorial">
         <ListItemText
           key={locationData!.length + 1}
-          tabIndex={locationData!.length + 1} 
+          tabIndex={locationData!.length + 1}
           primaryTypographyProps={{ fontSize: "20px" }}
           primary={"Tutorial Video"}
         />
@@ -602,7 +613,9 @@ function App() {
         <Drawer open={open} anchor={"left"} onClose={() => setOpen(false)}>
           {getList()}
         </Drawer>
-        <ShutdownImage socket={socket} ></ShutdownImage>
+        <SocketProvider>
+          <InteractableImage></InteractableImage>
+        </SocketProvider>
 
         <div className="App">
           <Button id="HamburgerMenuButton" onClick={() => setOpen(true)}>
@@ -659,105 +672,30 @@ function App() {
             <>
               <div id="currentLocation">
                 <h1>Feedback</h1>
-              <p>Wat vond je van deze rondleiding? <br />
-                Laat gerust een opmerking achter bij mijn menselijke collega's!</p>
+                <p>Wat vond je van deze rondleiding? <br />
+                  Laat gerust een opmerking achter bij mijn menselijke collega's!</p>
               </div>
               <div className="lowerRight">
-              <button
-                className="btn-next"
-                onClick={(event) => {
-                  sendLocation(
-                    nameToAlias(stepperData[0]),
-                    stepperData[0]
-                  );
-                }} 
-              >
-                Stuur terug naar start
+                <button
+                  className="btn-next"
+                  onClick={(event) => {
+                    sendLocation(
+                      nameToAlias(stepperData[0]),
+                      stepperData[0]
+                    );
+                  }}
+                >
+                  Stuur terug naar start
                 </button>
               </div>
               {/* <img src="/qr.jpg" id="qr" alt="mctLgo"></img> */}
             </>
           ) : ''}
 
-    {isAtCore ? (
-                <>
-                  {showInternational ? (
-                    <>
-                      <button className="hidden" id="cancelButton">
-                        <CancelIcon
-                          sx={{ fontSize: 100, color: red[500] }}
-                        ></CancelIcon>
-                      </button>
-                      <button
-                        id="GoToNextLocation"
-                        onClick={() => {
-                          setStepperCounter(stepperCounter + 1);
-                          if (stepperCounter < stepperData.length - 1) {
-                            let name = stepperData[stepperCounter + 1]
-                            let alias = nameToAlias(name);
-                            sendLocation(
-                              // Convert to the alias, which is the Temi location
-                              alias,
-                              name
-                            );
-                          } else {
-                            setIsLastPage(true);
-                            socket.emit("message", "finish");
-                          }
-                        }}
-                      >
-                        Go to{" "}
-                        {stepperCounter >= stepperData.length - 1
-                          ? "finish"
-                          : stepperData[stepperCounter + 1]}
-                      </button>
-                    </>
-                  ) : (
-                    <div className="multipleOptions">
-                      {coreLocations.map((alias) => (
-                        <button
-                          id="GoToNextLocation"
-                          onClick={() => {
-                            console.log(coreLocations);
-                            if (coreLocations.length === 1) {
-                              let name = aliasToName(alias)
-                              sendLocation(alias, name);
-                              setShowInternational(true);
-                            } else {
-                              setCoreLocation(
-                                coreLocations.filter((e) => e !== alias)
-                              ); // Remove the one you just selected
-                                
-                              let name = aliasToName(alias)
-                              sendLocation(alias, name);
-                            }
-                          }}
-                        >
-                          Ga naar {" " + aliasToName(alias)}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </>
-              ) : ( "" ) } 
-
-        { currentSentence !== "" ? (
-              <>
-              <Player
-              className='c-lottie'
-              autoplay={true}
-              loop={true}
-              controls={false}
-              keepLastFrame={true}
-              src={`${window.location.origin}/assets/lottie/loading.json`}
-              style={{ height: '22rem', width: '22rem', position: 'fixed', right: 0, bottom: 0 }}
-            ></Player>
-            </>
-            ) : '' }
-
-          { currentSentence === "" && !isLastPage ? (
+          {isAtCore ? (
             <>
-              <div id="title">
+              {showInternational ? (
+                <>
                   <button className="hidden" id="cancelButton">
                     <CancelIcon
                       sx={{ fontSize: 100, color: red[500] }}
@@ -766,23 +704,10 @@ function App() {
                   <button
                     id="GoToNextLocation"
                     onClick={() => {
-                      console.log("stepperCounter: ", stepperCounter);
-                      console.log("StepperData ", stepperData);
+                      setStepperCounter(stepperCounter + 1);
                       if (stepperCounter < stepperData.length - 1) {
                         let name = stepperData[stepperCounter + 1]
                         let alias = nameToAlias(name);
-                        
-                        console.log(stepperCounter + ": " + stepperData[stepperCounter + 1])
-                        sendLocation(
-                          // Convert to the alias, which is the Temi location
-                          alias,
-                          name
-                        );
-                      } else if (stepperData.length === 1) {
-                        let name = stepperData[0]
-                        let alias = nameToAlias(name);
-                        
-                        console.log(stepperCounter + ": " + name)
                         sendLocation(
                           // Convert to the alias, which is the Temi location
                           alias,
@@ -794,19 +719,107 @@ function App() {
                       }
                     }}
                   >
-                    {
+                    Go to{" "}
+                    {stepperCounter >= stepperData.length - 1
+                      ? "finish"
+                      : stepperData[stepperCounter + 1]}
+                  </button>
+                </>
+              ) : (
+                <div className="multipleOptions">
+                  {coreLocations.map((alias) => (
+                    <button
+                      id="GoToNextLocation"
+                      onClick={() => {
+                        console.log(coreLocations);
+                        if (coreLocations.length === 1) {
+                          let name = aliasToName(alias)
+                          sendLocation(alias, name);
+                          setShowInternational(true);
+                        } else {
+                          setCoreLocation(
+                            coreLocations.filter((e) => e !== alias)
+                          ); // Remove the one you just selected
+
+                          let name = aliasToName(alias)
+                          sendLocation(alias, name);
+                        }
+                      }}
+                    >
+                      Ga naar {" " + aliasToName(alias)}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </>
+          ) : ("")}
+
+          {currentSentence !== "" ? (
+            <>
+              <Player
+                className='c-lottie'
+                autoplay={true}
+                loop={true}
+                controls={false}
+                keepLastFrame={true}
+                src={`${window.location.origin}/assets/lottie/loading.json`}
+                style={{ height: '22rem', width: '22rem', position: 'fixed', right: 0, bottom: 0 }}
+              ></Player>
+            </>
+          ) : ''}
+
+          {currentSentence === "" && !isLastPage ? (
+            <>
+              <div id="title">
+                <button className="hidden" id="cancelButton">
+                  <CancelIcon
+                    sx={{ fontSize: 100, color: red[500] }}
+                  ></CancelIcon>
+                </button>
+                <button
+                  id="GoToNextLocation"
+                  onClick={() => {
+                    console.log("stepperCounter: ", stepperCounter);
+                    console.log("StepperData ", stepperData);
+                    if (stepperCounter < stepperData.length - 1) {
+                      let name = stepperData[stepperCounter + 1]
+                      let alias = nameToAlias(name);
+
+                      console.log(stepperCounter + ": " + stepperData[stepperCounter + 1])
+                      sendLocation(
+                        // Convert to the alias, which is the Temi location
+                        alias,
+                        name
+                      );
+                    } else if (stepperData.length === 1) {
+                      let name = stepperData[0]
+                      let alias = nameToAlias(name);
+
+                      console.log(stepperCounter + ": " + name)
+                      sendLocation(
+                        // Convert to the alias, which is the Temi location
+                        alias,
+                        name
+                      );
+                    } else {
+                      setIsLastPage(true);
+                      socket.emit("message", "finish");
+                    }
+                  }}
+                >
+                  {
                     stepperData.length === 1
-                    ? "Welkom in " + stepperData[0]
-                    :
+                      ? "Welkom in " + stepperData[0]
+                      :
                       stepperCounter >= stepperData.length - 1
                         ? "Ga naar einde"
                         : "Ga naar " + stepperData[stepperCounter + 1].split('-').join(" ")
-                        
-                    }
-                  </button>
-                </div>
+
+                  }
+                </button>
+              </div>
             </>
-          ) : '' }
+          ) : ''}
         </div>
         <div id="ttsDiv">
           <p>{currentSentence}</p>
@@ -834,7 +847,7 @@ function App() {
       <EmbedImage showImagePopup={showImagePopup} closeImagePopup={closeImagePopup} imagePath={imagePath} />
     </>
   );
-              
+
   // #endregion
 }
 
