@@ -5,7 +5,7 @@
 import { Player } from '@lottiefiles/react-lottie-player';
 import { useEffect, useState } from "react";
 import "./css/App.css";
-import { iLocationData } from "../interfaces/interfaces";
+import { iLocationData, NextStep, NextStepImpl, EmbedNextStep, ImageNextStep } from "./interfaces/interfaces";
 import { io } from "socket.io-client";
 import { Menu, Wifi, WifiOff } from "@mui/icons-material";
 import { blue, lightBlue, red } from "@mui/material/colors";
@@ -42,6 +42,9 @@ import {
   ListItemButton,
   ListItemText,
 } from "@mui/material";
+import EmbedWebsite from './components/embedwebsite';
+import EmbedImage from './components/embedImage';
+import ShutdownImage from './components/shutdownImage';
 const style = {
   position: "absolute" as "absolute",
   top: "50%",
@@ -69,10 +72,15 @@ function App() {
   }
   const socket = io(socketUrl);
   const api = "https://temiapi.azurewebsites.net";
+  // const api = "http://localhost:3001";
   // Fetch the tour from the queryString property "?tour="
   const tour = query.get("tour") ?? "Howest MCT";
   console.debug("Tour:", tour);
   console.debug("Socket:", socketUrl);
+
+  const debugMode = false; // Don't forget to toggle this to false!!
+
+
   const [stepperCounter, setStepperCounter] = useState(0);
   const [ShutdownCounter, setShutdownCounter] = useState(0);
   const [sentenceCounter, setSentenceCounter] = useState(-1);
@@ -105,11 +113,61 @@ function App() {
   const handleOpen = () => setOpenTutorial(true);
   const handleClose = () => setOpenTutorial(false);
 
-  const test = () => {
-    console.log(sentenceCounter, temiMovementData, currentLocation);
+  const [showIframe, setShowIframe] = useState(false);
+  const [iframeUrl, setIframeUrl] = useState("http://mct.be");
+
+  const closeIframe = () => {
+    setShowIframe(false);
+  }
+
+  const [showImagePopup, setShowImagePopup] = useState(false);
+  const [imagePath, setImagePath] = useState("");
+
+  const closeImagePopup = () => {
+    setShowImagePopup(false);
+  }
   
+
+  const handleFinish = () => {
+    console.log(`We are finished with the location "${currentLocation.name}" we can do something else now ...`);
+    if (currentLocation.onNextStep == null || currentLocation.onNextStep.type === NextStep.DEFAULT) {
+      console.debug("This location doesn't contain anything nextStep");
+      return;
+    }
+
+    console.log(`The next thing to do is:`, currentLocation.onNextStep)
+
+    let data: NextStepImpl;
+
+    switch (currentLocation.onNextStep.type) {
+        case NextStep.EMBED:
+          data = currentLocation.onNextStep;
+          console.log("The website we will embed now is: " + (data as EmbedNextStep).url);
+          setIframeUrl((data as EmbedNextStep).url);
+          setShowIframe(true);
+          break;
+        case NextStep.IMAGE:
+          data = currentLocation.onNextStep;
+          setImagePath("assets/images/" + (data as ImageNextStep).url);
+          setShowImagePopup(true);
+          break;
+        case NextStep.NESTED:
+          console.log("We should show a new page of nested items next...");
+          break;
+        default:
+          console.log("Not doing anything now ...");
+          break;
+    }
+
+
+  }
+
+
+  const sendSentenceToTemi = () => {
+    
     // Start the counter from 0 and up
     if (sentenceCounter >= 0) {
+      console.log("Sending sentence to Temi: ", sentenceCounter, temiMovementData, currentLocation);
       // If we have any locations, we continue
       if (locationData.length > 0) {
         if (currentLocation) {
@@ -125,6 +183,14 @@ function App() {
   }
 
   useEffect(() => {
+    //shutdown
+    if (ShutdownCounter === 15) {
+      socket.emit("shutdown");
+    }
+  }, [ShutdownCounter, socket]);
+
+  // When Temi is moving somewhere
+  useEffect(() => {
     let loc = locationData.filter(location => location.alias === temiMovementData);
     setCurrentLocation(loc[loc.length - 1]);
 
@@ -137,37 +203,27 @@ function App() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [temiMovementData]);
   
+  // When Temi should start speaking
   useEffect(() => {
-    // console.log("Speaking texts from location", temiMovementData)
-    test();
-    // if (locationData) {
-    //   let data = locationData.filter(location => location.alias === temiMovementData);
-    //   if (data.length > 0) {
-    //     let locationData = data[data.length - 1];
-    //     if (locationData) {
-    //       let sentence = locationData.textList[sentenceCounter]
-    //       if (sentence) {
-    //         socket.emit("tts", sentence)
-    //       }
-    //     }
-    //   }
-    // }
+    sendSentenceToTemi();
     
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sentenceCounter, startSpeaking]);
 
-  useEffect(() => {
-    if (startSpeaking) console.log("We will start speaking now!");
-  }, [startSpeaking])
-
+  // When Temi is Speaking
   useEffect(() => {
     if (nextMessage) {
-      console.log("Showing next message!")
+      console.log("Showing next message, Temi is still at: ", currentLocation.name)
       if (currentLocation) {
         if (sentenceCounter < currentLocation.textList.length - 1) {
           console.log("Current Sentence: ", currentSentence);
           console.log("Current Sentence Counter: ", sentenceCounter);
         } else {
+          console.log("We are finished speaking at: ", Date.now());
+          
+          // If there is a website to be rendered here, we will show it.
+          handleFinish();
+
           setCurrentSentence("");
           setSentenceCounter(-1);
           setStartSpeaking(false);
@@ -176,16 +232,17 @@ function App() {
       }
       setNextMessage(false);
       // use a Timeout to wait for the next message
+      let timeout = debugMode ? 100 : 10000;
       setTimeout(() => {
         setSentenceCounter(sentenceCounter + 1);
         console.log("Next message will be shown in 10 seconds!");
-      }, 10000);
+      }, timeout);
 
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nextMessage])
 
-  // Fetch the default information and get the socket connection on!
+  //  the default information and get the socket connection on!
   useEffect(() => {
     //#region Fetch the default information
     //API call to get location information
@@ -207,7 +264,7 @@ function App() {
         setStepperData(data[0].stepsList);
       });
 
-    let url = `${api}/api/locations/getByRegion/${tour}`;
+    let url = `${api}/api/locations/${tour}`;
     let options: RequestInit = {
       method: "GET",
       headers: {
@@ -222,7 +279,7 @@ function App() {
         }
       })
       .then((data) => {
-        console.log("SetLocationData: ", data);
+        console.debug("SetLocationData: ", data);
         setLocationData(data);
       });
 
@@ -266,16 +323,16 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Debugging
   useEffect(() => {
     const handleKeyPress = (event) => {
       // Call the setTemiMovementData method with a parameter when the 't' key is pressed
       if (event.key === "n") {
-        console.log("Debugging")
         setStepperCounter(stepperCounter + 1);
       }
       else if (event.key === "c") {
+        console.log(stepperData[stepperCounter])
         let location = nameToAlias(stepperData[stepperCounter]);
-        console.log("Finish: ", location)
         setTemiMovementData(location)
       }
       else if (event.key === "s") {
@@ -294,59 +351,6 @@ function App() {
       document.removeEventListener("keypress", handleKeyPress);
     };
   }, [stepperCounter, stepperData]);
-
-  // useEffect(() => {
-  //   //search correct text and emit to temi TTS
-  //   (() => {
-
-  //     let loc = locationData.filter(location => location.alias === temiMovementData);
-  //     if (loc !== undefined) {
-  //       // let data = loc[0]; // Get the first item, which should be the only one
-  //       // if (data) speak(data)
-  //     }
-  //   })();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [locationData, temiMovementData]);
-
-  // useEffect(() => {
-  //   //search next line of text & emit to temi
-  //   (() => {
-  //     if (currentLocation !== undefined) {
-        
-  //       let sentence =
-  //         currentLocation!.textList[
-  //           sentenceCounter
-  //         ]
-
-          
-  //         if (sentence !== undefined ) {
-  //         console.log(sentenceCounter + ": " + sentence)
-          
-  //         // Pause the speech
-  //         if (sentence === "...") {
-  //           setTimeout(() => {
-  //             console.log("Waiting for a second")
-  //             setCurrentSentence("...");
-  //           }, 500)
-  //         } else {
-  //           socket.emit( "tts", sentence);
-  //         }
-  //       } else {
-
-  //         setCurrentLocation(undefined);
-  //         setCurrentSentence("");
-  //       }
-  //     }
-  //   })();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [sentenceCounter]);
-
-  // useEffect(() => {
-  //   //shutdown
-  //   if (ShutdownCounter === 15) {
-  //     socket.emit("shutdown");
-  //   }
-  // }, [ShutdownCounter, socket]);
 
   useEffect(() => {
     // check if location is core ai infra xrdev nextweb
@@ -397,20 +401,20 @@ function App() {
       setStepperCounter(index);
     }
 
-    console.log("locationData: ", locationData)
-    console.log("Name: ", name)
+    console.debug("locationData: ", locationData)
 
     const LocationObj = locationData.filter(loc => loc.name === name)[0];
 
     console.log(LocationObj);
 
-    if (LocationObj.move) {
+    if (LocationObj.move && !debugMode) {
       console.log("Temi is moving to location", location)
       socket.emit("tts", `Volgt u me maar!`)
       // Make sure the robot actually moves to the location, then we will have to wait until he is there...
       socket.emit("message", location);
       // We will have to wait for the `temiMovementMessage` socket event to be received
     } else {
+      console.log("Temi doesn't have to move, because he's stationary");
       setTemiMovementData(location); 
     }
 
@@ -598,10 +602,7 @@ function App() {
         <Drawer open={open} anchor={"left"} onClose={() => setOpen(false)}>
           {getList()}
         </Drawer>
-        <img src="/mctLogo.jpg" alt="mctLgo" className="lowerleft" 
-        // Uncomment this during debugging
-        // onClick={() => setSentenceCounter(sentenceCounter + 1)}
-        ></img>
+        <ShutdownImage socket={socket} ></ShutdownImage>
 
         <div className="App">
           <Button id="HamburgerMenuButton" onClick={() => setOpen(true)}>
@@ -829,9 +830,11 @@ function App() {
           </Box>
         </Modal>
       </div>
+      <EmbedWebsite showIframe={showIframe} closeIframe={closeIframe} url={iframeUrl} />
+      <EmbedImage showImagePopup={showImagePopup} closeImagePopup={closeImagePopup} imagePath={imagePath} />
     </>
   );
-
+              
   // #endregion
 }
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { iLocationData } from "../interfaces/interfaces";
+import { iLocationData } from "./interfaces/interfaces";
 
 import "./css/App.css";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
