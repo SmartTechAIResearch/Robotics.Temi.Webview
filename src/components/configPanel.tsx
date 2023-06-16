@@ -6,7 +6,7 @@ import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 
-import { useAppConfig } from '../hooks/useAppConfig';
+import { useAppConfig } from '../hooks/useAppConfigAlt';
 
 function ConfigPanel({isOpen, onClose}) {
   const [config, handleConfigChange, saveConfig] = useAppConfig();

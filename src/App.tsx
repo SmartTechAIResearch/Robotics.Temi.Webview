@@ -43,8 +43,8 @@ import {
 } from "@mui/material";
 import { EmbedWebsite, EmbedImage, InteractableImage, LocationList, RefreshPage } from './components'
 
-import { SocketProvider, useSocket } from './SocketContext';
-import { useAppConfig } from './hooks/useAppConfig';
+import { SocketProvider, useSocket } from './SocketContextAlt';
+import { useAppConfig } from './hooks/useAppConfigAlt';
 
 
 const style = {
