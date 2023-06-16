@@ -40,7 +40,9 @@ export function useAppConfig(): [
     // Save LocalStorage config
     useEffect(() => {
         if (config.tour !== "") {
-            localStorage.setItem('appConfig', JSON.stringify(config));
+            if (localStorage != null) {
+                localStorage.setItem('appConfig', JSON.stringify(config));
+            }
         }
     }, [config]);
 
