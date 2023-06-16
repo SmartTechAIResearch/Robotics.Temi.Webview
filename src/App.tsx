@@ -266,8 +266,8 @@ function App() {
     fetch(url, options)
       .then((response) => {
         if (response.ok) {
-          return response.json();
           setIsLoading(false); // Set loading to false after data is fetched
+          return response.json();
         }
       })
       .then((data) => {
@@ -786,8 +786,10 @@ function App() {
   // #endregion
 }
 
-export default () => (
+const AppComponent = () => (
   <SocketProvider>
     <App />
   </SocketProvider>
 );
+
+export default AppComponent;

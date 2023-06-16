@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./css/index.css";
-import App from "./App";
+import AppComponent from "./App";
 import reportWebVitals from "./WebVitals/reportWebVitals";
 import { Admin } from "./Admin";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -12,7 +12,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <BrowserRouter>
     <Routes>
-      <Route path="/" element={<App />} />
+      <Route path="/" element={<AppComponent />} />
       <Route path="admin" element={<Admin />} />
     </Routes>
   </BrowserRouter>
