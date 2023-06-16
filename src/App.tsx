@@ -195,8 +195,8 @@ function App() {
   // When Temi is Speaking
   useEffect(() => {
     if (nextMessage) {
-      console.log("Showing next message, Temi is still at: ", currentLocation.name)
       if (currentLocation) {
+        console.log("Showing next message, Temi is still at: ", currentLocation.name)
         if (sentenceCounter < currentLocation.textList.length - 1) {
           console.log("Current Sentence: ", currentSentence);
           console.log("Current Sentence Counter: ", sentenceCounter);
