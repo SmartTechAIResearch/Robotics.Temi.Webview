@@ -6,9 +6,9 @@ export function useShutdown() {
   const socket = useSocket();
 
   useEffect(() => {
-    console.log("Incremented the ShutdownCounter, now at:", shutdownCount);
+    console.debug("Incremented the ShutdownCounter, now at:", shutdownCount);
     if (shutdownCount === 15) {
-        console.log("Shutting down the application");
+        console.warn("Shutting down the application");
         socket.emit("shutdown");
     }
   }, [shutdownCount, socket]);
@@ -16,7 +16,7 @@ export function useShutdown() {
   useEffect(() => {
     if (shutdownCount >= 1) {
         setTimeout(() => {
-            console.log("Resetting the Shutdown counter because nothing happened the last 10 seconds.");
+            console.debug("Resetting the Shutdown counter because nothing happened the last 10 seconds.");
             setShutdownCount(0);
         }, 10000);
     }

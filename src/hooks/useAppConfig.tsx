@@ -19,7 +19,7 @@ export function useAppConfig(): [
     useEffect(() => {
         const savedConfig = localStorage.getItem('appConfig');
         if (savedConfig) {
-            console.log("Found some existing config: " + savedConfig);
+            console.debug("Found some existing config: " + savedConfig);
             let conf = JSON.parse(savedConfig);
             setConfig(conf);
         } else {

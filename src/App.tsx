@@ -6,10 +6,9 @@ import { Player } from '@lottiefiles/react-lottie-player';
 import { useEffect, useState } from "react";
 import "./css/App.css";
 import { iLocationData, NextStep, NextStepImpl, EmbedNextStep, ImageNextStep } from "./interfaces/interfaces";
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 import { Menu, Wifi, WifiOff } from "@mui/icons-material";
 import { blue, lightBlue, red } from "@mui/material/colors";
-import RefreshIcon from "@mui/icons-material/Refresh";
 import { useLocation } from "react-router-dom";
 import {
   FormControlLabel,
@@ -42,9 +41,9 @@ import {
   ListItemButton,
   ListItemText,
 } from "@mui/material";
-import { EmbedWebsite, EmbedImage, InteractableImage } from './components'
+import { EmbedWebsite, EmbedImage, InteractableImage, LocationList, RefreshPage } from './components'
 
-import { SocketProvider } from './SocketContext';
+import { SocketProvider, useSocket } from './SocketContext';
 import { useAppConfig } from './hooks/useAppConfig';
 
 
@@ -63,37 +62,25 @@ const style = {
 //#endregion
 
 function App() {
-  console.log('App rendered');
-  // const steps = ["Reception", "1MCT", "The Core", "International"];
-  const query = new URLSearchParams(useLocation().search);
-  const socketVersion = query.get("socket") ?? "";
-  // If socketVersion is specified, use a different Socket URL
-  let socketUrl: string;
-  if (socketVersion !== "") {
-    socketUrl = "https://mcttemitour" + socketVersion + ".azurewebsites.net";
-  } else {
-    socketUrl = "https://mcttemisocket.azurewebsites.net";
-  }
-  const socket = io(socketUrl);
-  // const api = "https://temiapi.azurewebsites.net";
-  const api = "http://localhost:3001";
-  // Fetch the tour from the queryString property "?tour="
-  const tour = query.get("tour") ?? "Howest MCT";
-  console.debug("Tour:", tour);
-  console.debug("Socket:", socketUrl);
+  console.debug('App rendered');
+  const [api, setApi] = useState("");
+  const [tour, setTour] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [isErrorPage, setIsErrorPage] = useState(false);
+  const socket = useSocket();
 
   const [config, saveConfig] = useAppConfig();
 
   useEffect(() => {
     console.log("The saved config is:", config)
+    setApi(config.apiUri);
+    setTour(config.tour);
   }, [config])
-
 
   const debugMode = false; // Don't forget to toggle this to false!!
 
 
   const [stepperCounter, setStepperCounter] = useState(0);
-  const [ShutdownCounter, setShutdownCounter] = useState(0);
   const [sentenceCounter, setSentenceCounter] = useState(-1);
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [open, setOpen] = useState(false);
@@ -127,17 +114,8 @@ function App() {
   const [showIframe, setShowIframe] = useState(false);
   const [iframeUrl, setIframeUrl] = useState("http://mct.be");
 
-  const closeIframe = () => {
-    setShowIframe(false);
-  }
-
   const [showImagePopup, setShowImagePopup] = useState(false);
   const [imagePath, setImagePath] = useState("");
-
-  const closeImagePopup = () => {
-    setShowImagePopup(false);
-  }
-
 
   const handleFinish = () => {
     console.log(`We are finished with the location "${currentLocation.name}" we can do something else now ...`);
@@ -173,7 +151,6 @@ function App() {
 
   }
 
-
   const sendSentenceToTemi = () => {
 
     // Start the counter from 0 and up
@@ -193,12 +170,6 @@ function App() {
     }
   }
 
-  useEffect(() => {
-    //shutdown
-    if (ShutdownCounter === 15) {
-      socket.emit("shutdown");
-    }
-  }, [ShutdownCounter, socket]);
 
   // When Temi is moving somewhere
   useEffect(() => {
@@ -255,6 +226,12 @@ function App() {
 
   //  the default information and get the socket connection on!
   useEffect(() => {
+    if (api === "" || tour === "") {
+      console.warn("The config is not yet actively loaded, stopping here");
+      return;
+    }
+    console.log(`Api and Tour have been updated: Api: ${api}, Tour: ${tour} `)
+
     //#region Fetch the default information
     //API call to get location information
     let stepperURL = `${api}/api/stepper/${tour}`;
@@ -273,6 +250,9 @@ function App() {
       })
       .then((data) => {
         setStepperData(data[0].stepsList);
+      }).catch((error: string) => {
+        console.error("The url you requested is not found: ", stepperURL, error);
+        // TODO: Show a custom errorpage
       });
 
     let url = `${api}/api/locations/${tour}`;
@@ -287,15 +267,22 @@ function App() {
       .then((response) => {
         if (response.ok) {
           return response.json();
+          setIsLoading(false); // Set loading to false after data is fetched
         }
       })
       .then((data) => {
-        console.debug("SetLocationData: ", data);
+        console.info("SetLocationData: ", data);
         setLocationData(data);
+        setIsLoading(false); // Set loading to false after data is fetched
+
       });
 
     //#endregion
 
+  }, [api, tour]);
+
+  // Socket connection handlers
+  useEffect(() => {
     //connction with socket true
     socket.on("connect", () => {
       setIsConnected(true);
@@ -330,9 +317,7 @@ function App() {
     socket.onAny((event, data) => {
       console.debug(event, data);
     })
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [socket])
 
   // Debugging
   useEffect(() => {
@@ -507,63 +492,6 @@ function App() {
     );
   }
 
-
-  //fill drawer with locations from API
-  const getList = () => (
-    <Box
-      key="box"
-      role="presentation"
-      style={{ width: 250 }}
-      onClick={() => setOpen(false)}
-    >
-      {locationData.map((item, index) => (
-        <ListItemButton
-          key={index}
-          tabIndex={index}
-          onClick={(event) => {
-            setIsLastPage(false);
-            sendLocation(item.alias, item.name);
-          }}
-        >
-          {
-            <SvgIcon
-              className="svgClass"
-              component={
-                item.icon === "AccountBalanceIcon"
-                  ? AccountBalanceIcon
-                  : item.icon === "ForumIcon"
-                    ? ForumIcon
-                    : item.icon === "WcIcon"
-                      ? WcIcon
-                      : item.icon === "ElevatorIcon"
-                        ? ElevatorIcon
-                        : item.icon === "PowerIcon"
-                          ? PowerIcon
-                          : CancelIcon
-              }
-            ></SvgIcon>
-          }
-          <ListItemText
-            primaryTypographyProps={{ fontSize: "20px" }}
-            primary={item.name.split("-").join(" ")}
-          />
-        </ListItemButton>
-      ))}
-      <Divider key="divider-1" />
-      <Divider key="divider-2" />
-      <Divider key="divider-3" />
-
-      <ListItemButton onClick={handleOpen} key="tutorial">
-        <ListItemText
-          key={locationData!.length + 1}
-          tabIndex={locationData!.length + 1}
-          primaryTypographyProps={{ fontSize: "20px" }}
-          primary={"Tutorial Video"}
-        />
-      </ListItemButton>
-    </Box>
-  );
-
   // //convert alias to location name
   const aliasToName = (alias: any) => {
     for (let location of locationData) {
@@ -610,9 +538,19 @@ function App() {
   return (
     <>
       <div key="main">
+        {isLoading ? <p>Loading...</p> :
         <Drawer open={open} anchor={"left"} onClose={() => setOpen(false)}>
-          {getList()}
+        <LocationList 
+            locationData={locationData} 
+            setOpen={setOpen} 
+            sendLocation={sendLocation} 
+            handleOpen={handleOpen} 
+            setIsLastPage={setIsLastPage} 
+          />
         </Drawer>
+        }
+
+        
         <SocketProvider>
           <InteractableImage></InteractableImage>
         </SocketProvider>
@@ -632,14 +570,11 @@ function App() {
               label="Toggle TTS"
               labelPlacement="top"
             />
-            <button id="refreshPage" onClick={() => window.location.reload()}>
-              <RefreshIcon sx={{ fontSize: 40 }}></RefreshIcon>
-            </button>
+            <RefreshPage></RefreshPage>
             {isConnected ? (
               <Wifi
                 className="topright"
                 sx={{ fontSize: 40 }}
-                onClick={() => setShutdownCounter(ShutdownCounter + 1)}
               />
             ) : (
               <WifiOff
@@ -843,12 +778,16 @@ function App() {
           </Box>
         </Modal>
       </div>
-      <EmbedWebsite showIframe={showIframe} closeIframe={closeIframe} url={iframeUrl} />
-      <EmbedImage showImagePopup={showImagePopup} closeImagePopup={closeImagePopup} imagePath={imagePath} />
+      <EmbedWebsite showIframe={showIframe} closeIframe={() => setShowIframe(false)} url={iframeUrl} />
+      <EmbedImage showImagePopup={showImagePopup} closeImagePopup={() => setShowImagePopup(false)} imagePath={imagePath} />
     </>
   );
 
   // #endregion
 }
 
-export default App;
+export default () => (
+  <SocketProvider>
+    <App />
+  </SocketProvider>
+);

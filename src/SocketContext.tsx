@@ -8,7 +8,14 @@ export function useSocket() {
 }
 
 export function SocketProvider({ children }) {
-    const socket = io('https://mcttemisocket.azurewebsites.net'); // replace with your socket server url
+    const savedConfig = localStorage.getItem('appConfig');
+    let socketUrl: string;
+    if (savedConfig) {
+        let conf = JSON.parse(savedConfig);
+        socketUrl = conf.socketUri;
+    }
+    const socket = io(socketUrl); // replace with your socket server url
+    console.debug("Connecting to the socket: ", socketUrl);
 
   
     return (
