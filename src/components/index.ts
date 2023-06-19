@@ -1,7 +1,14 @@
-export {default as EmbedImage} from './embedImage';
-export {default as EmbedWebsite} from './embedwebsite';
+export {default as EmbedImage} from './EmbedImage';
+export {default as EmbedWebsite} from './EmbedWebsite';
 export {default as InteractableImage} from './InteractableImage';
-export {default as ConfigPanel} from './configPanel';
+export {default as ConfigPanel} from './ConfigPanel';
 export {default as LocationList} from './LocationList';
 export {default as RefreshPage} from './RefreshPage';
-
+export {default as TutorialVideo} from './TutorialVideo';
+export {default as SocketConnected} from './SocketConnected';
+export {default as ToggleTts} from './ToggleTts';
+export {default as NavAndTopBar} from './NavAndTopBar';
+export {default as LocationStepper} from './LocationStepper';
+export {default as StepperIcon} from './StepperIcon';
+export {default as Subtitle} from './Subtitle';
+export {default as Location } from './Location';

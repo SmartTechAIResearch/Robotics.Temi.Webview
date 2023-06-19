@@ -7,6 +7,7 @@ export interface iLocationData {
   region: string;
   move: boolean;
   onNextStep?: NextStepImpl;
+  stepIndex?: number;
 }
 
 export interface iTtsMessage {
@@ -36,4 +37,27 @@ export interface EmbedNextStep extends NextStepImpl {
 
 export interface ImageNextStep extends NextStepImpl {
   url: string;
+}
+
+export enum AppState {
+  Loading = "Loading",
+  Error = "Error",
+  Success = "Success",
+  Active = "Active",
+  Subpage = "Subpage",
+  LastPage = "LastPage",
+  NearlyLastPage = "NearlyLastPage",
+}
+
+export enum SubState {
+  None,
+  Idle,
+  Config,
+  Tutorial,
+  Video,
+  Image,
+  Embed,
+  Multipage,
+  Speaking,
+  Moving,
 }

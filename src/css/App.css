@@ -1,3 +1,42 @@
+@font-face {
+  font-family: "Vag Rounded Web";
+  font-display: swap;
+  font-weight: 700;
+  src: url(./fonts/vagroundedstd-bold-webfont.woff)format("woff")
+}
+
+/* #region Fonts */
+/* @font-face {
+  font-family: inter web;
+  font-display: swap;
+  font-weight: 400;
+  src: url(../fonts/Inter-Regular.woff2)format("woff2"),url(../fonts/Inter-Regular.woff)format("woff")
+}
+
+@font-face {
+  font-family: inter web;
+  font-display: swap;
+  font-weight: 400;
+  font-style: italic;
+  src: url(../fonts/Inter-Regularitalic.woff2)format("woff2"),url(../fonts/Inter-Regularitalic.woff)format("woff")
+}
+
+@font-face {
+  font-family: inter web;
+  font-display: swap;
+  font-weight: 700;
+  src: url(../fonts/Inter-Bold.woff2)format("woff2"),url(../fonts/Inter-Bold.woff)format("woff")
+}
+
+@font-face {
+  font-family: inter web;
+  font-display: swap;
+  font-weight: 700;
+  font-style: italic;
+  src: url(../fonts/Inter-BoldItalic.woff2)format("woff2"),url(../fonts/Inter-BoldItalic.woff)format("woff")
+} */
+/* #endregion */
+
 .App {
   text-align: center;
   width: 100vw;
@@ -170,4 +209,16 @@ span.Mui-active {
 .buttonGroup {
   display: flex;
   justify-content: space-between;
+}
+
+.c-loading h1 {
+  font-weight: 700;
+  font-family: "Vag Rounded Web",sans-serif;
+  font-size: 26px;
+  line-height: 30px;
+  text-align: center;
+}
+
+.color--blue {
+  color: #44c8f5;
 }

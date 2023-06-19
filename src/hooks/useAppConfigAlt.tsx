@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useSocket } from '../SocketContext';
+import { useSocket } from '../context/SocketContext';
 
 export function useAppConfig(): [
     { socketUri: string; apiUri: string; tour: string; empty: boolean; },

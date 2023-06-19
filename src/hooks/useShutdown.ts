@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSocket } from '../SocketContext';
+import { useSocket } from '../context/SocketContext';
 
 export function useShutdown() {
   const [shutdownCount, setShutdownCount] = useState(0);

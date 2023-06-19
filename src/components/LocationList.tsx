@@ -6,6 +6,7 @@ import WcIcon from '@mui/icons-material/Wc';
 import ElevatorIcon from '@mui/icons-material/Elevator';
 import PowerIcon from '@mui/icons-material/Power';
 import CancelIcon from '@mui/icons-material/Cancel';
+import { useLocation } from '../context/LocationContext';
 
 const iconMapping = {
     AccountBalanceIcon: AccountBalanceIcon,
@@ -15,7 +16,11 @@ const iconMapping = {
     PowerIcon: PowerIcon,
   };
 
-function LocationList({ locationData, setOpen, sendLocation, handleOpen, setIsLastPage }) {
+function LocationList({ setOpen, sendLocation, handleOpen }) {
+
+  const {
+    locationData,    
+  } = useLocation();
 
   return (
     <Box
@@ -29,8 +34,7 @@ function LocationList({ locationData, setOpen, sendLocation, handleOpen, setIsLa
           key={index}
           tabIndex={index}
           onClick={(event) => {
-            setIsLastPage(false);
-            sendLocation(item.alias, item.name);
+            sendLocation(item);
           }}
         >
           {
