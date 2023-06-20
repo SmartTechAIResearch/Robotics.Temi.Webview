@@ -11,4 +11,5 @@ export {default as NavAndTopBar} from './NavAndTopBar';
 export {default as LocationStepper} from './LocationStepper';
 export {default as StepperIcon} from './StepperIcon';
 export {default as Subtitle} from './Subtitle';
-export {default as Location } from './Location';
+export {default as Destination } from './Destination';
+export {default as LoadingCircle } from './LoadingCircle';

@@ -31,7 +31,6 @@ const StepperIconRoot = styled("div")<{ ownerState: { active?: boolean } }>(
     ...ownerState.active && { color: borderColor, fontSize: "xx-large", fontWeight: 700 },
     "& .StepperIcon-completedIcon": {
       color: borderColor,
-      zIndex: 1,
       fontSize: 32,
     },
     "& .StepperIcon-circle": {

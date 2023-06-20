@@ -8,6 +8,7 @@ export interface iLocationData {
   move: boolean;
   onNextStep?: NextStepImpl;
   stepIndex?: number;
+  visited: boolean;
 }
 
 export interface iTtsMessage {

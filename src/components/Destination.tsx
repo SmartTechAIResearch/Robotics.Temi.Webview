@@ -4,7 +4,7 @@ import { useLocation } from "../context/LocationContext";
 
 
 
-function Location({ onClickHandler }) {
+function Destination({ onClickHandler }) {
 
     const socket = useSocket();
     const {
@@ -31,4 +31,4 @@ function Location({ onClickHandler }) {
     )
 }
 
-export default Location;
+export default Destination;

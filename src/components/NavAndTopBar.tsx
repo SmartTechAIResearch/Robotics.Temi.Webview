@@ -9,15 +9,17 @@ import SocketConnected from './SocketConnected';
 import { useAppConfig } from '../hooks/useAppConfig';
 import { AppState } from '../interfaces/interfaces';
 import { useLocation } from '../context/LocationContext';
+import { useStateContext } from '../context/StateContext';
 
-function NavAndTopBar({ setAppState, setOpen, sendLocation, setOpenTutorial, open }) {
+function NavAndTopBar({ sendLocation }) {
+
+    const { setAppState, navbarOpen, setNavbarOpen } = useStateContext();
 
     const [api, setApi] = useState("");
     const [tour, setTour] = useState("");
     const [config] = useAppConfig();
 
     const {
-        locationData, 
         setLocationData,   
       } = useLocation();
 
@@ -69,17 +71,15 @@ function NavAndTopBar({ setAppState, setOpen, sendLocation, setOpenTutorial, ope
 
   return (
     <>
-      <Drawer open={open} anchor={"left"} onClose={() => setOpen(false)}>
+      <Drawer open={navbarOpen} anchor={"left"} onClose={() => setNavbarOpen(false)}>
         <LocationList
-          setOpen={setOpen}
           sendLocation={sendLocation}
-          handleOpen={() => setOpenTutorial(true)}
         />
       </Drawer>
 
       {/* The Top bar */}
       <div className="App">
-        <Button id="HamburgerMenuButton" onClick={() => setOpen(true)}>
+        <Button id="HamburgerMenuButton" onClick={() => setNavbarOpen(true)}>
           <Menu className="topleft" sx={{ fontSize: 40, color: "black" }} />
         </Button>
 

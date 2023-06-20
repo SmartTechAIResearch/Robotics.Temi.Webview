@@ -7,6 +7,8 @@ import ElevatorIcon from '@mui/icons-material/Elevator';
 import PowerIcon from '@mui/icons-material/Power';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { useLocation } from '../context/LocationContext';
+import { useStateContext } from '../context/StateContext';
+import { SubState } from '../interfaces/interfaces';
 
 const iconMapping = {
     AccountBalanceIcon: AccountBalanceIcon,
@@ -16,18 +18,20 @@ const iconMapping = {
     PowerIcon: PowerIcon,
   };
 
-function LocationList({ setOpen, sendLocation, handleOpen }) {
+function LocationList({ sendLocation }) {
 
   const {
     locationData,    
   } = useLocation();
+
+  const { setNavbarOpen, setSubState } = useStateContext();
 
   return (
     <Box
       key="box"
       role="presentation"
       style={{ width: 250 }}
-      onClick={() => setOpen(false)}
+      onClick={() => setNavbarOpen(false)}
     >
       {locationData.map((item, index) => (
         <ListItemButton
@@ -53,7 +57,7 @@ function LocationList({ setOpen, sendLocation, handleOpen }) {
       <Divider key="divider-2" />
       <Divider key="divider-3" />
 
-      <ListItemButton onClick={handleOpen} key="tutorial">
+      <ListItemButton onClick={() => setSubState(SubState.Tutorial)} key="tutorial">
         <ListItemText
           key={locationData.length + 1}
           tabIndex={locationData.length + 1}

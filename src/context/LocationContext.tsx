@@ -5,6 +5,7 @@ interface LocationContextType {
     currentLocation: iLocationData | null;
     nextLocation: iLocationData | null;
     destination: iLocationData | null;
+    firstLocation: iLocationData | null;
     locationData: iLocationData[];
     stepperLocations: iLocationData[];
     stepperData: any[];
@@ -12,6 +13,7 @@ interface LocationContextType {
     setCurrentLocation: (value: iLocationData | null) => void;
     setNextLocation: (value: iLocationData | null) => void;
     setDestination: (value: iLocationData | null) => void;
+    setFirstLocation: (value: iLocationData | null) => void;
     setLocationData: React.Dispatch<React.SetStateAction<iLocationData[]>>;
     setStepperLocations: React.Dispatch<React.SetStateAction<iLocationData[]>>;
     setStepperData: React.Dispatch<React.SetStateAction<[]>>;
@@ -35,6 +37,9 @@ const LocationContext = React.createContext<LocationContextType>({
 
     stepperCounter: -1,
     setStepperCounter: () => {},
+
+    firstLocation: null,
+    setFirstLocation: () => {},
 });
 
 export default LocationContext;
@@ -51,6 +56,7 @@ export function LocationProvider({ children }) {
     const [currentLocation, setCurrentLocation] = useState<iLocationData>();
     const [nextLocation, setNextLocation] = useState<iLocationData>();
     const [destination, setDestination] = useState<iLocationData>();
+    const [firstLocation, setFirstLocation] = useState<iLocationData>();
 
     const [stepperCounter, setStepperCounter] = useState(0);
 
@@ -84,6 +90,9 @@ export function LocationProvider({ children }) {
         setCurrentLocation(activeLocations[0]);
         // Set the next location to the second location
         setNextLocation(activeLocations[1]);
+
+        // Set first location
+        setFirstLocation(activeLocations[0]);
         }
 
     }, [stepperData, locationData])
@@ -105,7 +114,10 @@ export function LocationProvider({ children }) {
             setStepperData,
 
             stepperCounter,
-            setStepperCounter
+            setStepperCounter,
+
+            firstLocation,
+            setFirstLocation
           }}
         >
             {children}

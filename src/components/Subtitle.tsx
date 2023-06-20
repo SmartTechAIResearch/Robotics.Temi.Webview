@@ -1,5 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useLocation } from "../context/LocationContext";
+import { useSentenceContext } from "../context/SentenceContext";
 import { useSocket } from "../context/SocketContext";
+import LoadingCircle from "./LoadingCircle";
 
 function estimateReadingTime(text: string) {
     const averageCharsPerSecond = 12.5;
@@ -15,9 +18,15 @@ function estimateReadingTime(text: string) {
     return totalEstimatedTime; // This will be in seconds
   }
 
-function Subtitle({currentSentence, setCurrentSentence, sentenceCounter, setSentenceCounter, currentLocation, handleFinish }) {
+function Subtitle({ handleFinish }) {
 
     const socket = useSocket();
+    const { sentenceCounter, setSentenceCounter, currentSentence, setCurrentSentence } = useSentenceContext();
+    const {
+        currentLocation,
+      } = useLocation(); 
+
+    const [readingTime, setReadingTime] = useState<number>(-1);
 
     // When Temi should start speaking
   useEffect(() => {
@@ -34,11 +43,13 @@ function Subtitle({currentSentence, setCurrentSentence, sentenceCounter, setSent
 
      // Start a timer to show the next message after estimatedReadingTime for the current sentence has elapsed
      let estimatedReadingTime = estimateReadingTime(sentence);
+     setReadingTime(estimatedReadingTime);
      console.log("Estimated reading time: ", estimatedReadingTime);
      setTimeout(() => {
        // If the sentenceCounter is equal to the length of the textList, we are finished
        if (sentenceCounter === currentLocation.textList.length - 1 || currentLocation.textList.length === 0) {
          console.log("We are finished with the location: ", currentLocation.name);
+         setReadingTime(-1); // Reset the reading time
          handleFinish();
          return;
        }
@@ -50,9 +61,13 @@ function Subtitle({currentSentence, setCurrentSentence, sentenceCounter, setSent
  }, [sentenceCounter]);
 
     return (
-        <div id="ttsDiv" className="Subtitles">
-          <p>{currentSentence}</p>
-        </div>
+        <>
+            <div id="ttsDiv" className="Subtitles">
+            <p>{currentSentence}</p>
+            </div>
+            
+            <LoadingCircle key={readingTime} estimatedTimeout={readingTime} />
+        </>
       )
 }
 

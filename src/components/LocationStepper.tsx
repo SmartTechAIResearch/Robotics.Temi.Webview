@@ -4,8 +4,9 @@ import StepperIcon, { StepperConnector } from './StepperIcon'; // make sure to i
 import { useAppConfig } from '../hooks/useAppConfig'; // make sure to import this from the correct path
 import { AppState } from '../interfaces/interfaces';
 import { useLocation } from '../context/LocationContext';
+import { useStateContext } from '../context/StateContext';
 
-function LocationStepper({setAppState}) {
+function LocationStepper() {
     const [api, setApi] = useState("");
     const [tour, setTour] = useState("");
     const [config, ] = useAppConfig();
@@ -15,6 +16,8 @@ function LocationStepper({setAppState}) {
       stepperCounter,
       setStepperData    
     } = useLocation();    
+
+    const { setAppState } = useStateContext();
 
     useEffect(() => {
       console.debug("The saved config is:", config)

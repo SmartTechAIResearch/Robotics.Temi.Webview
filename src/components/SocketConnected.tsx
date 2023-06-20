@@ -19,6 +19,9 @@ export default function SocketConnected() {
     socket.on("disconnect", () => {
       setIsConnected(false);
     });
+    socket.onAny((event, data) => {
+        console.debug(event, data);
+    })
 }, [socket]);
 
     return isConnected ? (
