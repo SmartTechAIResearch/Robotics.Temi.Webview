@@ -1,6 +1,4 @@
-import { AppState, iLocationData } from "../interfaces/interfaces";
-import { useSocket } from "../context/SocketContext";
-import { useLocation } from "../context/LocationContext";
+import { iLocationData } from "../interfaces/interfaces";
 import { useEffect, useState } from "react";
 
 interface DestinationProps {
@@ -12,11 +10,6 @@ interface DestinationProps {
 
 
 const Destination: React.FC<DestinationProps> = ({ onClickHandler, visited, name}) => {
-
-    const {
-      stepperData,
-      stepperCounter
-    } = useLocation();
 
     const [destinationText, setDestinationText] = useState<string>("");
     const [visitedClass, setVisitedClass] = useState<boolean>(false);

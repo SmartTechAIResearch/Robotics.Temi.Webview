@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect, useState } from 'react';
 import { Destination } from '../components';
 import { useLocation } from '../context/LocationContext';
 import { useSentenceContext } from '../context/SentenceContext';
@@ -17,14 +18,13 @@ const MultiPage: React.FC<MultiPageProps> = ({ destinations: initialDestinations
 
     // Make it possible to override the destinations
     const [destinations, setDestinations] = useState(initialDestinations);
-    const [arrived, setArrived] = useState(false);
     const {
         setDestination,
         destination,
     } = useLocation();
     const socket = useSocket();
-    const { setCurrentSentence, setSentenceCounter } = useSentenceContext();
-    const { appState, setAppState, subState, setSubState } = useStateContext();
+    const { setCurrentSentence } = useSentenceContext();
+    const { setAppState, subState, setSubState } = useStateContext();
 
     // Calculate the class that's necessary to show the amount of destinations
     const destinationsClass = `destinations${destinations.length}`;
@@ -34,9 +34,8 @@ const MultiPage: React.FC<MultiPageProps> = ({ destinations: initialDestinations
 
     useEffect(() => {
         // Temi sends a message here when his movement is finished.
-        if (subState == SubState.Multipage) {
+        if (subState === SubState.Multipage) {
             console.log("Temi has arrived again")
-            setArrived(true);
             if (destination != null) {
                 
                  // Create a new array with the updated 'visited' property
@@ -78,7 +77,6 @@ const MultiPage: React.FC<MultiPageProps> = ({ destinations: initialDestinations
             setAppState(AppState.Active); // Make sure the AppState is set back to active in case it was executed from the LastPage
             setSubState(SubState.Moving); // Temi is now moving, we can use this to show an extra field
     
-            setArrived(false); // Not yet arrived, ofcourse
             console.log("Sending Temi to location: ", location);
     
         }
