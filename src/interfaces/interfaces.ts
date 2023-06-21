@@ -8,7 +8,7 @@ export interface iLocationData {
   move: boolean;
   onNextStep?: NextStepImpl;
   stepIndex?: number;
-  visited: boolean;
+  visited?: boolean;
 }
 
 export interface iTtsMessage {
@@ -26,6 +26,7 @@ export enum NextStep {
   VIDEO = "Video",
   IMAGE = "Image",
   NESTED = "Nested",
+  BUBBLE_TO_PARENT = "Bubble",
 }
 
 export interface NextStepImpl {
@@ -38,6 +39,14 @@ export interface EmbedNextStep extends NextStepImpl {
 
 export interface ImageNextStep extends NextStepImpl {
   url: string;
+}
+
+export interface NestedNextStep extends NextStepImpl {
+  locations: string[];
+}
+
+export interface BubbleNextStep extends NextStepImpl {
+  parentLocation: string;
 }
 
 export enum AppState {

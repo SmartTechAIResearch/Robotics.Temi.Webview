@@ -39,22 +39,22 @@ function Subtitle({ handleFinish }) {
        // Send the sentence to Temi, we then await the response to show the subtitles
        setCurrentSentence(sentence);
        socket.emit("tts", sentence)
+       // Start a timer to show the next message after estimatedReadingTime for the current sentence has elapsed
+       let estimatedReadingTime = estimateReadingTime(sentence);
+       setReadingTime(estimatedReadingTime);
+       console.log("Estimated reading time: ", estimatedReadingTime);
+       setTimeout(() => {
+         // If the sentenceCounter is equal to the length of the textList, we are finished
+         if (sentenceCounter === currentLocation.textList.length - 1 || currentLocation.textList.length === 0) {
+           setReadingTime(-1); // Reset the reading time
+           setSentenceCounter(-1);
+           handleFinish();
+           return;
+         }
+         setSentenceCounter(sentenceCounter + 1);
+       }, estimatedReadingTime * 1000);
      }
 
-     // Start a timer to show the next message after estimatedReadingTime for the current sentence has elapsed
-     let estimatedReadingTime = estimateReadingTime(sentence);
-     setReadingTime(estimatedReadingTime);
-     console.log("Estimated reading time: ", estimatedReadingTime);
-     setTimeout(() => {
-       // If the sentenceCounter is equal to the length of the textList, we are finished
-       if (sentenceCounter === currentLocation.textList.length - 1 || currentLocation.textList.length === 0) {
-         console.log("We are finished with the location: ", currentLocation.name);
-         setReadingTime(-1); // Reset the reading time
-         handleFinish();
-         return;
-       }
-       setSentenceCounter(sentenceCounter + 1);
-     }, estimatedReadingTime * 1000);
    }
 
    // eslint-disable-next-line react-hooks/exhaustive-deps

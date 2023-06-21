@@ -2,15 +2,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 // #region imports
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import "./css/App.css";
-import { iLocationData, NextStep, NextStepImpl, EmbedNextStep, ImageNextStep, AppState, SubState } from "./interfaces/interfaces";
+import { iLocationData, NextStep, NextStepImpl, EmbedNextStep, ImageNextStep, AppState, SubState, NestedNextStep, BubbleNextStep } from "./interfaces/interfaces";
 
 import { EmbedWebsite, EmbedImage, InteractableImage, TutorialVideo, NavAndTopBar, LocationStepper, Destination, Subtitle } from './components'
-import { LastPage } from './views';
+import { LastPage, MultiPage } from './views';
 import { SocketProvider, useSocket } from './context/SocketContext';
 import { LocationProvider, useLocation } from './context/LocationContext';
-import { useAppConfig } from './hooks/useAppConfig';
 import { ErrorAnimation, LoadingAnimation } from './animations';
 import { StateProvider, useStateContext } from "./context/StateContext";
 import { SentenceProvider, useSentenceContext } from "./context/SentenceContext";
@@ -28,6 +27,7 @@ function App() {
   // Location info
   const {
     currentLocation,
+    setCurrentLocation,
     nextLocation,
     destination,
     setDestination,
@@ -36,11 +36,14 @@ function App() {
     firstLocation,
 
     stepperCounter,
-    setStepperCounter
+    setStepperCounter,
+    locationData
   } = useLocation();
 
   const [nextMessage, setNextMessage] = useState<boolean>(false);
   const [temiMovementData, setTemiMovementData] = useState<string>("");
+  const [multiDestinations, setMultiDestinations] = useState<iLocationData[]>([]);
+  const [parentLocation, setParentLocation] = useState<iLocationData>(null);
 
   // Finish info
   const [iframeUrl, setIframeUrl] = useState("http://mct.be");
@@ -57,7 +60,7 @@ function App() {
     }
 
     console.log(`The next thing to do is:`, currentLocation.onNextStep)
-    let data: NextStepImpl;
+    let data: NextStepImpl; 
 
     switch (currentLocation.onNextStep.type) {
       case NextStep.EMBED:
@@ -72,8 +75,30 @@ function App() {
         setSubState(SubState.Image);
         break;
       case NextStep.NESTED:
-        console.log("We should show a new page of nested items next...");
+        data = currentLocation.onNextStep;
+        setSubState(SubState.Multipage);
+        // Fetch locations from the names
+        let locations = (data as NestedNextStep).locations.map((locationName: string) => {
+          return locationData.find((location: iLocationData) => location.name === locationName);
+        });
+        setMultiDestinations(locations);
+        setParentLocation(currentLocation);
         break;
+      case NextStep.BUBBLE_TO_PARENT:
+        data = currentLocation.onNextStep;
+        setSubState(SubState.Multipage);
+        let parentLocationName = (data as BubbleNextStep).parentLocation;
+        let parentLocation = locationData.find((location: iLocationData) => location.name === parentLocationName);
+        if (multiDestinations.length <= 0) {
+          console.log("We don't have any destinations yet, so we will fetch them now ...")
+          let locations = (parentLocation.onNextStep as NestedNextStep).locations.map((locationName: string) => {
+            return locationData.find((location: iLocationData) => location.name === locationName);
+          });
+          setMultiDestinations(locations);
+          setParentLocation(parentLocation);
+        }
+        break;
+
       default:
         console.log("Not doing anything now ...");
         break;
@@ -81,6 +106,17 @@ function App() {
 
 
   }
+
+  const onClickHandler = useCallback(() => {
+    console.log("App State is: ", appState.toString());
+    // If the AppState is not NearlyLastPage, we can just go to the next location
+    // Else, we should move to the LastPage
+    if (appState === AppState.NearlyLastPage) {
+      setAppState(AppState.LastPage);
+      return;
+    }
+    sendLocation(nextLocation);
+  }, [appState, nextLocation]);
 
   // #region Debugging
 
@@ -189,20 +225,21 @@ function App() {
                             return <Subtitle
                               handleFinish={handleFinish}
                             />
+                          case SubState.Multipage:
+                            return <MultiPage
+                              destinations={multiDestinations}
+                              parentLocation={parentLocation}
+                              nextLocation={nextLocation}
+                              sendLocation={() => sendLocation(nextLocation)}
+                            />
                           default:
                             return (
-                              <Destination
-                                onClickHandler={() => {
-                                  console.log("App State is: ", appState.toString());
-                                  // If the AppState is not NearlyLastPage, we can just go to the next location
-                                  // Else, we should move to the LastPage
-                                  if (appState === AppState.NearlyLastPage) {
-                                    setAppState(AppState.LastPage);
-                                    return;
-                                  }
-                                  sendLocation(nextLocation);
-                                }}
-                              ></Destination>
+                              <div className="multiDestinations destinations1">
+                                <Destination
+                                  onClickHandler={onClickHandler}
+                                  {...nextLocation}
+                                ></Destination>
+                              </div>
                             )
                         }
                       })()
