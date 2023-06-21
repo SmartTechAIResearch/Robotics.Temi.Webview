@@ -17,19 +17,37 @@ export function useAppConfig(): [
 
     // Fetch and save the LocalStorage
     useEffect(() => {
-        const savedConfig = localStorage.getItem('appConfig');
+        const savedConfig = {
+            socketUri: 'https://mcttemisocket.azurewebsites.net',
+            apiUri: 'https://temi.azurewebsites.net',
+            tour: 'Meets The Industry',
+            empty: false
+        }
         if (savedConfig) {
             console.debug("Found some existing config: " + savedConfig);
-            let conf = JSON.parse(savedConfig);
+            let conf = savedConfig;
             setConfig(conf);
         } else {
             setConfig({
                 socketUri: 'https://mcttemisocket.azurewebsites.net',
-                apiUri: 'https://temi.azurewebsites.net',
+                apiUri: 'https://temiapi.azurewebsites.net',
                 tour: 'Howest MCT',
                 empty: false
             });
         }
+        // const savedConfig = localStorage.getItem('appConfig');
+        // if (savedConfig) {
+        //     console.debug("Found some existing config: " + savedConfig);
+        //     let conf = JSON.parse(savedConfig);
+        //     setConfig(conf);
+        // } else {
+        //     setConfig({
+        //         socketUri: 'https://mcttemisocket.azurewebsites.net',
+        //         apiUri: 'https://temi.azurewebsites.net',
+        //         tour: 'Howest MCT',
+        //         empty: false
+        //     });
+        // }
     }, []);
 
     // Save LocalStorage config

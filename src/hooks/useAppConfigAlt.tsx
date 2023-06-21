@@ -20,7 +20,7 @@ export function useAppConfig(): [
         const savedConfig = {
             socketUri: 'https://mcttemisocket.azurewebsites.net',
             apiUri: 'https://temi.azurewebsites.net',
-            tour: 'Howest Penta -1 2',
+            tour: 'Meets The Industry',
             empty: false
         }
         if (savedConfig) {

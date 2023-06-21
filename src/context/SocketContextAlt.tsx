@@ -11,7 +11,7 @@ export function SocketProvider({ children }) {
     const conf = {
         socketUri: 'https://mcttemisocket.azurewebsites.net',
         apiUri: 'https://temi.azurewebsites.net',
-        tour: 'Howest Penta -1 2',
+        tour: 'Meets The Industry',
         empty: false
     };
     let socketUrl = conf.socketUri;
