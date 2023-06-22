@@ -9,7 +9,7 @@ function FeedbackPage({ sendLocation, afterFinishEvent, afterFinishText }) {
         <p>Wat vond je van deze rondleiding? <br />
           Laat gerust een opmerking achter bij mijn menselijke collega's!</p>
       </div>
-      <div className="lowerRight">
+      <div className="lowerRight multiDestinations destinations1 destination-sm">
         <button
           className="btn-next"
           onClick={(event) => afterFinishEvent(event)}

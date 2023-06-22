@@ -1,12 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { useSocket } from '../context/SocketContext';
 
+export interface iAppConfig {
+    socketUri: string;
+    apiUri: string;
+    tour: string;
+    empty: boolean;
+}
+
+export const defaultConfig: iAppConfig = {
+    socketUri: 'https://mcttemisocket.azurewebsites.net',
+    apiUri: 'https://temi.azurewebsites.net',
+    tour: 'Meets The Industry',
+    empty: false
+}
+
 export function useAppConfig(): [
-    { socketUri: string; apiUri: string; tour: string; empty: boolean; },
+    iAppConfig,
     (event: React.ChangeEvent<HTMLInputElement>) => void,
     () => void
 ] {
-    const [config, setConfig] = useState({
+    const [config, setConfig] = useState<iAppConfig>({
         socketUri: '',
         apiUri: '',
         tour: '',
@@ -17,45 +31,24 @@ export function useAppConfig(): [
 
     // Fetch and save the LocalStorage
     useEffect(() => {
-        const savedConfig = {
-            socketUri: 'https://mcttemisocket.azurewebsites.net',
-            apiUri: 'https://temi.azurewebsites.net',
-            tour: 'Meets The Industry',
-            empty: false
-        }
-        if (savedConfig) {
-            console.debug("Found some existing config: " + savedConfig);
-            let conf = savedConfig;
-            setConfig(conf);
+        let savedConfig: iAppConfig;
+        if (localStorage != null) {
+            const localConfig = localStorage.getItem('appConfig');
+            if (localConfig) {
+                console.log("Found some existing config: " + localConfig);
+                savedConfig = JSON.parse(localConfig);
+                setConfig(savedConfig);
+            } else {
+                console.log("No existing config found.")
+                setConfig(defaultConfig); // If there is no localStorage item set, but localStorage exists
+            }
+        // What if LocalStorage isn't available, such as on the Android Webview?
         } else {
-            setConfig({
-                socketUri: 'https://mcttemisocket.azurewebsites.net',
-                apiUri: 'https://temiapi.azurewebsites.net',
-                tour: 'Howest MCT',
-                empty: false
-            });
+            console.log("LocalStorage wasn't available so using fallback.")
+            setConfig(defaultConfig);
         }
-        // const savedConfig = localStorage.getItem('appConfig');
-        // if (savedConfig) {
-        //     console.debug("Found some existing config: " + savedConfig);
-        //     let conf = JSON.parse(savedConfig);
-        //     setConfig(conf);
-        // } else {
-        //     setConfig({
-        //         socketUri: 'https://mcttemisocket.azurewebsites.net',
-        //         apiUri: 'https://temi.azurewebsites.net',
-        //         tour: 'Howest MCT',
-        //         empty: false
-        //     });
-        // }
-    }, []);
 
-    // Save LocalStorage config
-    useEffect(() => {
-        if (config.tour !== "") {
-            localStorage.setItem('appConfig', JSON.stringify(config));
-        }
-    }, [config]);
+    }, []);
 
     const handleConfigChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setConfig({
@@ -68,6 +61,9 @@ export function useAppConfig(): [
         // Update socket and API URIs
         socket.connect(config.socketUri);
         // Do similar thing for API URI
+        if (config.tour !== "" && localStorage != null) {
+            localStorage.setItem('appConfig', JSON.stringify(config));
+        }
     };
 
     return [config, handleConfigChange, saveConfig];

@@ -1,5 +1,6 @@
-import { iLocationData } from "../interfaces/interfaces";
+import { AppState, iLocationData } from "../interfaces/interfaces";
 import { useEffect, useState } from "react";
+import { useStateContext } from "../context/StateContext";
 
 interface DestinationProps {
   onClickHandler?: () => void; 
@@ -14,10 +15,15 @@ const Destination: React.FC<DestinationProps> = ({ onClickHandler, visited, name
     const [destinationText, setDestinationText] = useState<string>("");
     const [visitedClass, setVisitedClass] = useState<boolean>(false);
 
+    const { setAppState } = useStateContext();
+
     useEffect(() => {
       if (name != null) {
         console.log(`The name of the destination is ${name}`);
         setDestinationText(`Ga naar ${name}`);
+      }
+      if (name == null) {
+        setAppState(AppState.LastPage);
       }
     }, [name]);
 
