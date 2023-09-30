@@ -16,6 +16,8 @@ import { SentenceProvider, useSentenceContext } from "./context/SentenceContext"
 import TemiMovement from "./components/TemiMovement";
 
 //#endregion
+const socketOverride = true; // set this to "True" if you want to disable the socket connection on your dev machine
+
 
 function App() {
   console.debug('App rendered');

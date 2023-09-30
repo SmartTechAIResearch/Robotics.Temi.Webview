@@ -1,6 +1,8 @@
 import { createContext, useContext } from "react";
 import { io } from "socket.io-client";
+import { defaultConfig } from "../hooks/useAppConfig";
 
+const configTour = process.env.REACT_APP_TOUR ?? "Howest MCT";
 const SocketContext = createContext(null);
 
 export function useSocket() {
@@ -8,15 +10,11 @@ export function useSocket() {
 }
 
 export function SocketProvider({ children }) {
-    const conf = {
-        socketUri: 'https://mcttemisocket.azurewebsites.net',
-        apiUri: 'https://temi.azurewebsites.net',
-        tour: 'Meets The Industry',
-        empty: false
-    };
+    const conf = defaultConfig;
     let socketUrl = conf.socketUri;
     const socket = io(socketUrl); // replace with your socket server url
-    console.debug("Connecting to the socket: ", socketUrl);
+    console.log("Connecting to the socket: ", socketUrl);
+    console.log("Starting tour: ", configTour);
 
   
     return (

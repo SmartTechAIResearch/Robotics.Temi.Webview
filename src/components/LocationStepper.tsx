@@ -7,9 +7,7 @@ import { useLocation } from '../context/LocationContext';
 import { useStateContext } from '../context/StateContext';
 
 function LocationStepper() {
-    const [api, setApi] = useState("");
-    const [tour, setTour] = useState("");
-    const [config, ] = useAppConfig();
+    const [config] = useAppConfig();
 
     const {
       stepperData,
@@ -17,30 +15,24 @@ function LocationStepper() {
       setStepperData    
     } = useLocation();    
 
-    const { setAppState } = useStateContext();
+    const { setAppState, apiUrl, tour } = useStateContext();
 
     useEffect(() => {
-      console.debug("The saved config is:", config)
-      setApi(config.apiUri);
-      setTour(config.tour);
-    }, [config]);
-
-    useEffect(() => {
-        if (api === "" || tour === "") {
+        if (apiUrl === "" || tour === "") {
           console.warn("The config is not yet actively loaded, stopping here");
           return;
         }
-        console.debug(`Api and Tour have been updated: Api: ${api}, Tour: ${tour} `)
+        console.info(`Api and Tour have been updated: Api: ${apiUrl}, Tour: ${tour} `)
 
-        let stepperURL = `${api}/api/stepper/${tour}`;
-        let optionsURL = {
+        let url = `${apiUrl}/api/stepper/${tour}`;
+        let options: RequestInit = {
           method: "GET",
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json;charset=UTF-8",
           },
         };
-        fetch(stepperURL, optionsURL)
+        fetch(url, options)
           .then((response) => {
             if (response.ok) {
               setAppState(AppState.Active); // Set loading to false after data is fetched
@@ -50,12 +42,13 @@ function LocationStepper() {
           .then((data) => {
             setAppState(AppState.Active); // Set loading to false after data is fetched
             setStepperData(data[0].stepsList);
+            console.log("Setting data to", data)
           }).catch((error) => {
-            console.error("The url you requested is not found: ", stepperURL, error);
+            console.error("The url you requested is not found: ", url, error);
             setAppState(AppState.Error); // Set loading to false after data is fetched
             // TODO: Show a custom error page
           });
-    }, [api, tour, setAppState, setStepperData]);
+    }, [apiUrl, tour, setAppState, setStepperData]);
 
     return (
       <div className="Stepper">

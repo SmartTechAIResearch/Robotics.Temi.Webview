@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSocket } from '../context/SocketContext';
 
+
 export interface iAppConfig {
     socketUri: string;
     apiUri: string;
@@ -11,28 +12,27 @@ export interface iAppConfig {
 export const defaultConfig: iAppConfig = {
     socketUri: 'https://mcttemisocket.azurewebsites.net',
     apiUri: 'https://temi.azurewebsites.net',
-    tour: 'Meets The Industry',
+    tour: "Howest MCT",
     empty: false
 }
+
+// Fetch from process env if available
+
 
 export function useAppConfig(): [
     iAppConfig,
     (event: React.ChangeEvent<HTMLInputElement>) => void,
     () => void
 ] {
-    const [config, setConfig] = useState<iAppConfig>({
-        socketUri: '',
-        apiUri: '',
-        tour: '',
-        empty: true,
-    });
+    const [config, setConfig] = useState<iAppConfig>(defaultConfig);
 
     const socket = useSocket();
 
     // Fetch and save the LocalStorage
     useEffect(() => {
         let savedConfig: iAppConfig;
-        if (localStorage != null) {
+        let overrideLocalStorage = true;
+        if (localStorage != null && !overrideLocalStorage) {
             const localConfig = localStorage.getItem('appConfig');
             if (localConfig) {
                 console.log("Found some existing config: " + localConfig);
@@ -59,7 +59,7 @@ export function useAppConfig(): [
 
     const saveConfig = () => {
         // Update socket and API URIs
-        socket.connect(config.socketUri);
+        socket.connect();
         // Do similar thing for API URI
         if (config.tour !== "" && localStorage != null) {
             localStorage.setItem('appConfig', JSON.stringify(config));

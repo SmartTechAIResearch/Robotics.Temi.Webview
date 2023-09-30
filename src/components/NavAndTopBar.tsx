@@ -13,10 +13,8 @@ import { useStateContext } from '../context/StateContext';
 
 function NavAndTopBar({ sendLocation }) {
 
-    const { setAppState, navbarOpen, setNavbarOpen } = useStateContext();
+    const { setAppState, navbarOpen, setNavbarOpen, apiUrl, setApiUrl, tour, setTour } = useStateContext();
 
-    const [api, setApi] = useState("");
-    const [tour, setTour] = useState("");
     const [config] = useAppConfig();
 
     const {
@@ -24,23 +22,23 @@ function NavAndTopBar({ sendLocation }) {
       } = useLocation();
 
     useEffect(() => {
-      console.debug("The saved config is:", config)
-      setApi(config.apiUri);
+      console.info("The saved config is:", config)
+      setApiUrl(config.apiUri);
       setTour(config.tour);
     }, [config]);
 
     //  the default information and get the socket connection on!
   useEffect(() => {
-    if (api === "" || tour === "") {
+    if (apiUrl === "" || tour === "") {
       console.warn("The config is not yet actively loaded, stopping here");
       return;
     }
-    console.debug(`Api and Tour have been updated: Api: ${api}, Tour: ${tour} `)
+    console.info(`Api and Tour have been updated: Api: ${apiUrl}, Tour: ${tour} `)
 
     //#region Fetch the default information
     //API call to get location information
 
-    let url = `${api}/api/locations/${tour}`;
+    let url = `${apiUrl}/api/locations/${tour}`;
     let options: RequestInit = {
       method: "GET",
       headers: {
@@ -66,7 +64,7 @@ function NavAndTopBar({ sendLocation }) {
 
     //#endregion
 
-  }, [api, tour, setAppState, setLocationData]);
+  }, [apiUrl, tour, setAppState, setLocationData]);
 
 
   return (
