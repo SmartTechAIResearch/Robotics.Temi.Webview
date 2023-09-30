@@ -31,7 +31,6 @@ export function Admin() {
   const sendLocation = (location: string) => {
     socket!.emit("message", location);
   };
-  const [socket, setSocket] = useState<Socket>();
   useEffect(() => {
     let url =
       "https://temiapi.azurewebsites.net/api/locations/getLocations";
