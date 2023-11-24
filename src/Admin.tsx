@@ -21,38 +21,18 @@ import {
   TextField,
 } from "@mui/material";
 import { io, Socket } from "socket.io-client";
+import { useSocket } from "./context/SocketContext";
 
 export function Admin() {
   const [locationData, setLocationData] = useState<Array<iLocationData>>([]);
   const [ttsInput, setTtsInput] = useState<string>("");
   const [locationInput, setLocationInput] = useState<string>("");
   const [locationResponse, setLocationResponse] = useState<string>("");
+  const socket = useSocket();
 
   const sendLocation = (location: string) => {
     socket!.emit("message", location);
   };
-  useEffect(() => {
-    let url =
-      "https://temiapi.azurewebsites.net/api/locations/getLocations";
-    let options: RequestInit = {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json;charset=UTF-8",
-      },
-    };
-    fetch(url, options)
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-      })
-      .then((data) => {
-        console.log(data);
-        setLocationData(data);
-      });
-    setSocket(io("https://mcttemisocket.azurewebsites.net"));
-  }, []);
 
   const sendTTS = () => {
     socket!.emit("tts", ttsInput);

@@ -28,6 +28,19 @@ function Subtitle({ handleFinish }) {
 
     const [readingTime, setReadingTime] = useState<number>(-1);
 
+    useEffect(() => {
+
+      // Temi sends a message here when his movement is finished.
+      // Use it to reset the sentenceCounter and start speaking the first sentence of the arrived location.
+      socket.on("ttsMessage", (data: any) => {
+          // First line
+          if (data["custom"]) {
+            setCurrentSentence(data["ttsMessage"])
+          }
+      });
+
+  }, [socket])
+
     // When Temi should start speaking
   useEffect(() => {
     // Start the counter from 0 and up

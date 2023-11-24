@@ -52,7 +52,23 @@ function LocationStepper() {
 
     return (
       <div className="Stepper">
-        <Stack sx={{ width: "100%" }} spacing={4}>
+        <Stack sx={{ 
+            minWidth: "100%", // Ensures the minimum width is 100% of the container
+            maxWidth: "fit-content", // Allows the stack to expand beyond 100% if needed
+            overflow: "auto", // Enables scrolling if the content overflows
+            '&::-webkit-scrollbar': {
+              display: 'none' // Hides the scrollbar for Webkit browsers
+            },
+            // For other browsers, use the following:
+            msOverflowStyle: 'none', // For Internet Explorer and Edge
+            scrollbarWidth: 'none', // For Firefox
+            spacing: 4,
+            '& .MuiStep-root': { // Targeting each Step component within the Stack
+              minWidth: '150px', // Minimum width for each Step
+            }
+          }}
+        spacing={4}
+        >
           <Stepper
             id="stepper"
             alternativeLabel

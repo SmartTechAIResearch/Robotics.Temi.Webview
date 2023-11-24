@@ -2,7 +2,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 // #region imports
-import { useCallback, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import "./css/App.css";
 import { iLocationData, NextStep, NextStepImpl, EmbedNextStep, ImageNextStep, AppState, SubState, NestedNextStep, BubbleNextStep } from "./interfaces/interfaces";
 
@@ -16,7 +16,6 @@ import { SentenceProvider, useSentenceContext } from "./context/SentenceContext"
 import TemiMovement from "./components/TemiMovement";
 
 //#endregion
-const socketOverride = true; // set this to "True" if you want to disable the socket connection on your dev machine
 
 
 function App() {

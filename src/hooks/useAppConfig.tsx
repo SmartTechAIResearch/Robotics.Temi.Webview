@@ -12,7 +12,7 @@ export interface iAppConfig {
 export const defaultConfig: iAppConfig = {
     socketUri: 'https://mcttemisocket.azurewebsites.net',
     apiUri: 'https://temi.azurewebsites.net',
-    tour: "Howest MCT",
+    tour: "Howest Penta -1 DVDW",
     empty: false
 }
 
